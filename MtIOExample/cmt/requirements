@@ -1,0 +1,6 @@
+package MtIOExample
+
+use SniperKernel   v*
+
+library MtIOExample *.cc
+apply_pattern install_python_modules
