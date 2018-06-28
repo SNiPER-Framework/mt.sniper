@@ -16,30 +16,32 @@
    You should have received a copy of the GNU Lesser General Public License
    along with mt.sniper.  If not, see <http://www.gnu.org/licenses/>. */
 
-#include "MusterContext.h"
+#ifndef SNIPER_THREAD_ASSISTOR_H
+#define SNIPER_THREAD_ASSISTOR_H
 
-MusterContext* MusterContext::s_obj = nullptr;
+#include <boost/python.hpp>
+#include <thread>
 
-MusterContext& MusterContext::create()
+class ThreadAssistor
 {
-    if ( s_obj == nullptr )
-    {
-        s_obj = new MusterContext();
-    }
-    return *s_obj;
-}
+    public :
 
-void MusterContext::destroy()
-{
-    if ( s_obj != nullptr ) {
-        delete s_obj;
-        s_obj = nullptr;
-    }
-}
+        ThreadAssistor();
+        virtual ~ThreadAssistor();
 
-MusterContext::MusterContext()
-    : m_infinite(false),
-      m_evtMax(5),
-      m_done(0)
-{
-}
+        void start(boost::python::api::object& task);
+
+        void stop();
+
+        void join();
+
+    private :
+
+        void run();
+
+        std::thread m_thread;
+
+        boost::python::api::object m_task;
+};
+
+#endif

@@ -16,42 +16,43 @@
    You should have received a copy of the GNU Lesser General Public License
    along with mt.sniper.  If not, see <http://www.gnu.org/licenses/>. */
 
-#ifndef SNIPER_TASK_SUPERVISOR
-#define SNIPER_TASK_SUPERVISOR
+#ifndef SNIPER_GLOBAL_STREAM_H
+#define SNIPER_GLOBAL_STREAM_H
 
-#include <tbb/task.h>
-#include <list>
+#include "ThreadAssistor.h"
+#include <string>
 
-class TaskWatchDog;
-class SniperTbbTask;
+class GlobalBuffer;
 
-class TaskSupervisor : public tbb::task
+class GlobalStream
 {
-    public:
+    public :
 
-        TaskSupervisor() : m_stat(false) {}
-        ~TaskSupervisor();
+        static GlobalStream* Get(const std::string& name);
 
-        // map a sniper TaskWatchDog to a tbb::task
-        bool intake(TaskWatchDog& snoopy);
+        GlobalStream(const std::string& name);
+        virtual ~GlobalStream();
 
-        // the override of tbb::task::execute()
-        tbb::task* execute();
+        bool configInput(boost::python::api::object& functor);
+        bool configOutput(boost::python::api::object& functor);
+        void configBuffer(unsigned int capacity, unsigned int cordon);
 
-        const char* objName() { return "TaskSupervisor"; }
+        const std::string& objName() { return m_name; }
 
-    private:
+        GlobalBuffer*      buffer()  { return m_buf; }
 
-        // init value is false, then set true for continuation
-        bool m_stat;
+    private :
 
-        // children of this supervisor
-        // no tbb::task_list::size() available, list is better
-        std::list<SniperTbbTask*> m_children;
+        GlobalBuffer*      m_buf;
+        const std::string  m_name;
+
+        ThreadAssistor     m_ithread;
+        ThreadAssistor     m_othread;
 
         // following interfaces are not supported
-        TaskSupervisor(const TaskSupervisor&) = delete;
-        TaskSupervisor& operator=(const TaskSupervisor&) = delete;
+        GlobalStream() = delete;
+        GlobalStream(const GlobalStream&) = delete;
+        GlobalStream& operator=(const GlobalStream&) = delete;
 };
 
 #endif

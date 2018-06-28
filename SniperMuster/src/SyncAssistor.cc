@@ -16,30 +16,23 @@
    You should have received a copy of the GNU Lesser General Public License
    along with mt.sniper.  If not, see <http://www.gnu.org/licenses/>. */
 
-#include "MusterContext.h"
+#include "SyncAssistor.h"
+#include <mutex>
+#include <condition_variable>
 
-MusterContext* MusterContext::s_obj = nullptr;
+static bool SyncAssistorFlag = false;
+static std::mutex SyncAssistorMutex;
+static std::condition_variable SyncAssistorCond;
 
-MusterContext& MusterContext::create()
+void SyncAssistor::wait()
 {
-    if ( s_obj == nullptr )
-    {
-        s_obj = new MusterContext();
-    }
-    return *s_obj;
+    std::unique_lock<std::mutex> lock(SyncAssistorMutex);
+    SyncAssistorCond.wait(lock, [] { return SyncAssistorFlag; } );
 }
 
-void MusterContext::destroy()
+void SyncAssistor::run()
 {
-    if ( s_obj != nullptr ) {
-        delete s_obj;
-        s_obj = nullptr;
-    }
-}
-
-MusterContext::MusterContext()
-    : m_infinite(false),
-      m_evtMax(5),
-      m_done(0)
-{
+    std::lock_guard<std::mutex> lock(SyncAssistorMutex);
+    SyncAssistorFlag = true;
+    SyncAssistorCond.notify_all();
 }

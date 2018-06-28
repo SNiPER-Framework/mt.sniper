@@ -3,8 +3,9 @@ package SniperMuster
 use SniperKernel  v*
 use Boost         v*  Externals
 
-macro_append SniperMuster_use_linkopts " -ltbb -lrt "
+macro_append SniperMuster_use_linkopts " -lpthread -ltbb -lrt "
 
+apply_pattern install_more_includes more="SniperMuster"
 apply_pattern install_python_modules
 
 library SniperMuster *.cc
