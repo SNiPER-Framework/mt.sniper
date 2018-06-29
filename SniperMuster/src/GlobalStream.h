@@ -37,6 +37,7 @@ class GlobalStream
         bool configOutput(boost::python::api::object& functor);
         void configBuffer(unsigned int capacity, unsigned int cordon);
 
+        const char*        scope()   { return ""; }
         const std::string& objName() { return m_name; }
 
         GlobalBuffer*      buffer()  { return m_buf; }
