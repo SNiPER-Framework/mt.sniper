@@ -6,7 +6,6 @@ def HelloJob():
     global ith
     ith += 1
     task = Sniper.Task(str(ith) +"-Job")
-    task.setLogLevel(3)
 
     import MtIOExample
     x = task.createAlg("DummyIOAlg/x")
@@ -34,11 +33,17 @@ def GInput():
 def GOutput():
     import Sniper
     task = Sniper.Task("GOutput")
-    task.createAlg("WriteGBufAlg")
+    wa = task.createAlg("WriteGBufAlg")
+    wa.property("DataFile").set("data.file")
 
     return task
 
 if __name__ == "__main__":
+
+    import Sniper
+    Sniper.setLogLevel(3)
+    #Sniper.setShowTime()
+    #Sniper.setLogFile("log.txt", False)
 
     import SniperMuster
     muster = SniperMuster.Muster()

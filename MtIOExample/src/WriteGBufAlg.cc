@@ -38,6 +38,7 @@ class WriteGBufAlg : public AlgBase
 
         GlobalBuffer* m_gbuf;
 
+        std::string   m_fname;
         std::ofstream m_ofs;
 };
 
@@ -46,6 +47,7 @@ DECLARE_ALGORITHM(WriteGBufAlg);
 WriteGBufAlg::WriteGBufAlg(const std::string& name)
     : AlgBase(name)
 {
+    declProp("DataFile", m_fname);
 }
 
 WriteGBufAlg::~WriteGBufAlg()
@@ -56,7 +58,9 @@ bool WriteGBufAlg::initialize()
 {
     m_gbuf = GlobalBuffer::FromStream("GEvtStream");
 
-    //m_ofs.open("out_data.txt", std::ios::trunc);
+    if ( ! m_fname.empty() ) {
+        m_ofs.open(m_fname, std::ios::trunc);
+    }
 
     return true;
 }
@@ -66,7 +70,9 @@ bool WriteGBufAlg::execute()
     DummyEvent* evt = static_cast<DummyEvent*>(m_gbuf->pop_front());
 
     if ( evt != nullptr ) {
-        //m_ofs << evt->getGid() << '\t' << evt->getLid() << '\t' << evt->getNum() << std::endl;
+        if ( ! m_fname.empty() ) {
+            m_ofs << evt->getGid() << '\t' << evt->getLid() << '\t' << evt->getNum() << std::endl;
+        }
         delete evt;
     }
     else {
