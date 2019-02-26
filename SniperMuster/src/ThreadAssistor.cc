@@ -40,7 +40,7 @@ void ThreadAssistor::start(boost::python::api::object& task)
 void ThreadAssistor::stop()
 {
     boost::python::extract<Task&> xtask(m_task);
-    xtask().stop();
+    xtask().stop(Sniper::StopRun::Peacefully);
 }
 
 void ThreadAssistor::join()
