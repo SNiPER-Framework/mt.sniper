@@ -34,7 +34,7 @@ Muster::Muster()
     : m_threads(0)
 {
     MusterContext::create();
-    sniper_context.set(Sniper::SysMode::MT);
+    sniper_context->set(Sniper::SysMode::MT);
     m_supervisor = new(tbb::task::allocate_root()) TaskSupervisor();
 }
 
@@ -81,7 +81,7 @@ bool Muster::append(boost::python::api::object& functor)
 
 bool Muster::run()
 {
-    sniper_context.set_threads(m_threads);
+    sniper_context->set_threads(m_threads);
 
     tbb::task_scheduler_init scheduler_init(m_threads);
 
