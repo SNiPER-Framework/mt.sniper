@@ -76,7 +76,7 @@ bool WriteGBufAlg::execute()
         delete evt;
     }
     else {
-        m_par->stop();
+        m_par->finalize();
     }
 
     return true;

@@ -23,6 +23,7 @@
 #include <list>
 
 class IIncidentHandler;
+class Task;
 
 class DummyMemMgr : public SvcBase
 {
@@ -36,7 +37,9 @@ class DummyMemMgr : public SvcBase
 
     private :
 
+        Task* m_par;
         std::list<IIncidentHandler*> m_icdts;
+
 };
 
 #endif

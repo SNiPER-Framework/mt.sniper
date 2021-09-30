@@ -63,7 +63,7 @@ bool FillGBufAlg::execute()
 
     if ( gid == m_max ) {
         m_gbuf->push_back(nullptr);
-        getParent()->stop();
+        getParent()->finalize();
         return true;
     }
 
