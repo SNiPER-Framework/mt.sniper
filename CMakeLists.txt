@@ -4,7 +4,11 @@ message(STATUS "cmake version ${CMAKE_VERSION}")
 project(MtSNiPER VERSION 1.0 LANGUAGES CXX)
 
 find_package(SNiPER 2.0 REQUIRED)
+<<<<<<< HEAD
 find_package(TBB 2020.1 REQUIRED)
+=======
+find_package(tbb 2020.1 REQUIRED)
+>>>>>>> df6a9afc7d845d89669045a283332633f0cbaa4e
 
 # Global Settings
 include(CMakePrintHelpers)
@@ -65,4 +69,8 @@ add_subdirectory(SniperMuster)
 add_subdirectory(MtIOExample)
 
 #Generate and install configure files
+<<<<<<< HEAD
 include(cmake/MtSNiPERCreateConfig.cmake)
+=======
+include(cmake/MtSNiPERCreateConfig.cmake)
+>>>>>>> df6a9afc7d845d89669045a283332633f0cbaa4e
