@@ -20,6 +20,7 @@
 #include "DummyInputSvc.h"
 #include "DummyStore.h"
 #include "DummyEvent.h"
+#include "SniperKernel/Task.h"
 #include "SniperKernel/SniperPtr.h"
 #include "SniperKernel/SniperDataPtr.h"
 #include "SniperKernel/SniperException.h"
@@ -54,5 +55,5 @@ bool BeginEvtHdl::handle(Incident& /*incident*/)
         return true;
     }
 
-    return m_domain.stop();
+    return m_domain.finalize();
 }

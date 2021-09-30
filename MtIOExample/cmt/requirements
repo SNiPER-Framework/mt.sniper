@@ -1,7 +1,0 @@
-package MtIOExample
-
-use SniperKernel   v*
-use SniperMuster   v*
-
-library MtIOExample *.cc
-apply_pattern install_python_modules

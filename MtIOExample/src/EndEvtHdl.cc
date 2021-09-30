@@ -20,6 +20,7 @@
 #include "DummyOutputSvc.h"
 #include "DummyStore.h"
 #include "DummyEvent.h"
+#include "SniperKernel/Task.h"
 #include "SniperKernel/SniperPtr.h"
 #include "SniperKernel/SniperDataPtr.h"
 #include "SniperKernel/SniperException.h"
