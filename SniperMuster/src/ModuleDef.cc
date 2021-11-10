@@ -23,6 +23,8 @@
 
 namespace bp = boost::python;
 
+void export_GlobalStream();
+
 BOOST_PYTHON_MODULE(libSniperMuster)
 {
     bp::class_<Muster, boost::noncopyable>("Muster")
@@ -32,14 +34,6 @@ BOOST_PYTHON_MODULE(libSniperMuster)
         .def("run", &Muster::run)
         ;
 
-    bp::class_<GlobalStreamFactory, boost::noncopyable>("GlobalStreamFactory")
-        .def("create", &GlobalStreamFactory::create, bp::return_value_policy<bp::reference_existing_object>())
-        ;
+    export_GlobalStream();
 
-    bp::class_<GlobalStreamBase, boost::noncopyable>
-        ("GlobalStream", bp::init<const std::string&>())
-        .def("configInput", &GlobalStreamBase::configInput)
-        .def("configOutput", &GlobalStreamBase::configOutput)
-        .def("configBuffer", &GlobalStreamBase::configBuffer)
-        ;
 }
