@@ -142,7 +142,7 @@ std::shared_ptr<T> GlobalBuffer<T>::pop_front()
 
     std::unique_lock<std::mutex> lock(m_mutex1);
     m_doneCond.wait( lock,//如果Elem的状态是2（处理结束），或者为1（被处理过）且智能指针的引用技术小于2，即代表可以清理
-            [this] { return （this->m_begin->stat == 2) || this->m_begin->stat == 1 && this->m_begin->dptr.use_count() < 2; }
+            [this] { return this->m_begin->stat == 2; }
             );
     // suppose there is only one thread to pop a global buffer
     lock.unlock();
