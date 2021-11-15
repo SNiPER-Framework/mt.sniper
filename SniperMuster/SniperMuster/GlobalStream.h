@@ -30,11 +30,11 @@
 #include <map>
 
 template<typename T>
-class GlobalStream : GlobalStreamBase
+class GlobalStream : public GlobalStreamBase
 {
     public :
 
-        static GlobalStream* Get(const std::string& name);
+        typedef GlobalBuffer<T> BufferType;
 
         GlobalStream(const std::string& name);
         virtual ~GlobalStream();
@@ -46,12 +46,15 @@ class GlobalStream : GlobalStreamBase
         const char*        scope()   { return ""; }
         const std::string& objName() { return m_name; }
 
-        GlobalBuffer<T>*      buffer()  { return m_buf; }
+        static BufferType* GetBuffer(const std::string& name);
+
+        BufferType*      buffer()  { return m_buf; }
 
     private :
 
         static std::map<std::string, GlobalStream*> s_GBufMap;
-        GlobalBuffer<T>*      m_buf;
+
+        BufferType*      m_buf;
         const std::string  m_name;
 
         ThreadAssistor     m_ithread;
@@ -66,19 +69,11 @@ class GlobalStream : GlobalStreamBase
 
 namespace bp = boost::python;
 
-template<typename T>
-GlobalStream<T>* GlobalStream<T>::Get(const std::string& name)
-{
-    auto it = s_GBufMap.find(name);
-    if ( it == s_GBufMap.end() ) {
-        throw SniperException(std::string("No GlobalStream ") + name);
-    }
-    return it->second;
-}
 
 template<typename T>
 GlobalStream<T>::GlobalStream(const std::string& name)
-    : m_buf(nullptr),
+    : GlobalStreamBase(name),
+      m_buf(nullptr),
       m_name(name)
 {
     s_GBufMap.insert(std::make_pair(name, this));
@@ -121,8 +116,20 @@ bool GlobalStream<T>::configOutput(bp::api::object& functor)
 template<typename T>
 void GlobalStream<T>::configBuffer(unsigned int capacity, unsigned int cordon)
 {
-    m_buf = new GlobalBuffer<T>(capacity, cordon);
+    m_buf = new BufferType(capacity, cordon);
 }
 
+template<typename T>
+typename GlobalStream<T>::BufferType* GlobalStream<T>::GetBuffer(const std::string& name){
+    auto it = s_GBufMap.find(name);
+    if ( it == s_GBufMap.end() ) {
+        throw SniperException(std::string("No GlobalStream ") + name);
+    }
+
+    return it->second->buffer();
+}
+
+template<typename T>
+typename std::map<std::string, GlobalStream<T>*> GlobalStream<T>:: s_GBufMap;
 
 #endif

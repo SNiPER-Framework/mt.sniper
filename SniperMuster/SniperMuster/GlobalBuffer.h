@@ -24,7 +24,6 @@
 #include <condition_variable>
 #include <memory>
 #include "SniperKernel/SniperLog.h"
-#include "GlobalStream.h"
 #include <iostream>
 
 template<typename T> 
@@ -32,7 +31,7 @@ class GlobalBuffer
 {
     public :
 
-        static GlobalBuffer* FromStream(const std::string& name);
+        //static GlobalBuffer* FromStream(const std::string& name);
 
         struct Elem {
             std::shared_ptr<T>  dptr;
@@ -70,13 +69,14 @@ class GlobalBuffer
         std::condition_variable  m_dataCond;
         std::condition_variable  m_doneCond;
 };
-
+/*
 template<typename T>
 GlobalBuffer<T>* GlobalBuffer<T>::FromStream(const std::string& name)
 {
-    auto stream = GlobalStream::Get(name);
+    auto stream = GlobalStreamBase::Get(name);
     return stream->buffer();
 }
+*/
 
 template<typename T>
 GlobalBuffer<T>::GlobalBuffer(int capacity, int cordon)
@@ -138,10 +138,10 @@ void GlobalBuffer<T>::push_back(std::shared_ptr<T> dptr)
 template<typename T>
 std::shared_ptr<T> GlobalBuffer<T>::pop_front()
 {
-    shared_ptr<T> dptr(nullptr);
+    std::shared_ptr<T> dptr(nullptr);
 
     std::unique_lock<std::mutex> lock(m_mutex1);
-    m_doneCond.wait( lock,//如果Elem的状态是2（处理结束），或者为1（被处理过）且智能指针的引用技术小于2，即代表可以清理
+    m_doneCond.wait( lock,
             [this] { return this->m_begin->stat == 2; }
             );
     // suppose there is only one thread to pop a global buffer
@@ -162,7 +162,7 @@ std::shared_ptr<T> GlobalBuffer<T>::pop_front()
 }
 
 template<typename T>
-GlobalBuffer<T>::Elem* GlobalBuffer<T>::next()
+typename GlobalBuffer<T>::Elem* GlobalBuffer<T>::next()
 {
     Elem* ref = nullptr;
 

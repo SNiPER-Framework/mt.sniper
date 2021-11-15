@@ -1,4 +1,7 @@
 #include "ThrdInputSvc.h"
+#include "SniperKernel/SvcFactory.h"
+
+DECLARE_SERVICE(ThrdInputSvc);
 
 bool ThrdInputSvc::initialize(){
     m_inputStream = new ReadFragBufStream();

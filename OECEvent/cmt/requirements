@@ -1,0 +1,30 @@
+package OECEvent
+
+use SniperKernel v*
+use ROOT v* Externals
+use EDMUtil v* DataModel
+#use EvtNavigator v* DataModel
+#use BaseEvent v* DataModel
+#use BufferMemMgr v* CommonSvc
+
+macro_append OECEvent_shlibflags " -lMathMore"
+
+macro OECEvent_cintflags " -I$(OECEVENTROOT) "
+macro_append OECEvent_cintflags " -I$(BASEEVENTROOT) "
+macro_append OECEvent_cintflags " -I$(EDMUTILROOT) "
+
+#macro_append OECEvent_cintflags " $(OECEvent_cintflags) "
+macro_append OECHeader_cintflags " $(OECEvent_cintflags) "
+
+macro_append XODflags " -n DEMO "
+
+apply_pattern cint_dictionary files="../Event/OECEvent.h"
+apply_pattern cint_dictionary files="../Event/OECHeader.h"
+
+include_dirs $(OECEVENTROOT)/
+include_dirs $(OECEVENTROOT)/Event
+library OECEvent *.cc
+apply_pattern linker_library library=OECEvent
+
+#apply_pattern install_python_modules
+apply_pattern install_more_includes more=Event

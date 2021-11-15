@@ -3,10 +3,20 @@ message(STATUS "cmake version ${CMAKE_VERSION}")
 
 project(MtSNiPER VERSION 1.0 LANGUAGES CXX)
 
-find_package(SNiPER 2.0 REQUIRED)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}")
+
+find_package(offline)
+include(PKG)
+include(JUNOSetupScripts)
+include(JUNOInstallOfflineSetup)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}")
+
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+
+# find_package(SNiPER 2.0 REQUIRED)
 include($ENV{TBB_ROOT}/cmake/TBBBuild.cmake)
 tbb_build(TBB_ROOT $ENV{TBB_ROOT} CONFIG_DIR TBB_DIR MAKE_ARGS tbb_cpf=0)
-find_package(TBB 2020.1 REQUIRED)
+find_package(TBB)
 
 # Global Settings
 include(CMakePrintHelpers)
@@ -26,7 +36,7 @@ if(WIN32)
 endif()
 
 # Compiler and Linker Settings
-set(CMAKE_CXX_STANDARD 11 CACHE STRING "")
+set(CMAKE_CXX_STANDARD 17 CACHE STRING "")
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -pthread")
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
@@ -63,12 +73,11 @@ endif()
 add_definitions(-DHAVE_PYTHON)
 unset(PyPkgName)
 
+add_subdirectory(OECEvent)
 add_subdirectory(SniperMuster)
 #add_subdirectory(MtIOExample)
+add_subdirectory(CoAnalysis)
+
 
 #Generate and install configure files
-#<<<<<<< HEAD
 include(cmake/MtSNiPERCreateConfig.cmake)
-#=======
-include(cmake/MtSNiPERCreateConfig.cmake)
-#>>>>>>> df6a9afc7d845d89669045a283332633f0cbaa4e

@@ -5,11 +5,15 @@
 namespace bp = boost::python;
 
 //用于暴露给python 产生globalStream
-GlobalStreamBase* createGlobalStream(std::string& name){
+GlobalStreamBase* createGlobalStream(const char* name){
     return GlobalStreamFactory::instance().create(name);
 }
 
 struct GlobalStreamBaseWrap: GlobalStreamBase, bp::wrapper<GlobalStreamBase>{
+    GlobalStreamBaseWrap(const std::string& name)
+        : GlobalStreamBase(name)
+    {}
+
     bool configInput(boost::python::api::object& functor){
         return this->get_override("configInput")();
     }
@@ -30,7 +34,7 @@ void export_GlobalStream(){
     def("createGlobalStream", createGlobalStream, return_value_policy<reference_existing_object>());
 
     class_<GlobalStreamBaseWrap, boost::noncopyable>
-        ("GlobalStreamBase")
+        ("GlobalStream", init<const std::string&>())
         .def("configInput", pure_virtual(&GlobalStreamBase::configInput))
         .def("configOutput", pure_virtual(&GlobalStreamBase::configOutput))
         .def("configBuffer", pure_virtual(&GlobalStreamBase::configBuffer));

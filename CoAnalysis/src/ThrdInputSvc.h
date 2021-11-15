@@ -7,8 +7,8 @@
 
 class ThrdInputSvc: public SvcBase, public IInputSvc{
 public:
-    ThrdInputSvc();
-    virtual ~ThrdInputSvc();
+    ThrdInputSvc(const std::string& name) : SvcBase(name) {}
+    virtual ~ThrdInputSvc() {}
     
     bool initialize();
     bool finalize();

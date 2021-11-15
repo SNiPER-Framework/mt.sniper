@@ -1,4 +1,4 @@
-#include "src/GlobalStream.h"
+#include "SniperMuster/GlobalStream.h"
 #include "SniperMuster/GlobalStreamFactory.h"
 #include "SniperMuster/Fragment.h"
 #include "EvtNavigator/EvtNavigator.h"

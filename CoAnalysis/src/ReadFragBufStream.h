@@ -11,6 +11,7 @@ class ReadFragBufStream: public IInputStream{
 public:
     ReadFragBufStream();
     virtual bool initialize();
+    virtual bool first(bool /*read*/) { return true; }
     virtual bool next(int step = 1, bool read = true);
     virtual TObject* get();
 

@@ -2,6 +2,7 @@
 #include "SniperKernel/AlgFactory.h"
 #include "SniperKernel/SniperLog.h"
 #include "SniperMuster/Fragment.h"
+#include "SniperMuster/GlobalStream.h"
 #include "EvtNavigator/EvtNavigator.h"
 #include "EvtNavigator/NavBuffer.h"
 #include <memory>
@@ -13,7 +14,7 @@ typedef Fragment<EvtNavigator> Frag;
 
 class PackFragAlg: public AlgBase{
 public:
-    PackFragAlg(string& name);
+    PackFragAlg(const string& name);
     virtual ~PackFragAlg();
 
     virtual bool initialize();
@@ -34,8 +35,8 @@ private:
 
 DECLARE_ALGORITHM(PackFragAlg);
 
-PackFragAlg::PackFragAlg(string& name):
-    AlgBase(name),
+PackFragAlg::PackFragAlg(const string& name):
+    AlgBase(name),m_curFragSize(0),
     m_frag(new Frag){
         declProp("MaxFragSize", m_maxFragSize = 100);
     }
@@ -44,7 +45,8 @@ PackFragAlg::~PackFragAlg(){}
 
 bool PackFragAlg::initialize(){
     //获取存放fragment 的globalbuffer
-    m_gbuf = GlobalBuffer<Frag>::FromStream("GFragStream");
+    m_gbuf = GlobalStream<Frag>::GetBuffer("GFragStream");
+    std::cout << __FILE__ << " gbuf : " << m_gbuf << std::endl;
     
     //get the instance of NavBuffer
     SniperDataPtr<JM::NavBuffer>  navBuf(getParent(), "/Event");
@@ -63,7 +65,7 @@ bool PackFragAlg::execute(){
     if(m_curFragSize >= m_maxFragSize){//判断是否应该把Fragment填入GlobalBuffer
         fillFBuf();
         m_frag.reset(new Frag);
-        addEvent();
+        //addEvent();
     }
 
     return true;
