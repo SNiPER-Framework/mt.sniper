@@ -19,6 +19,7 @@
 #include "SniperTbbTask.h"
 #include "MusterContext.h"
 #include "SniperKernel/TaskWatchDog.h"
+#include "SniperKernel/SniperException.h"
 
 SniperTbbTask::SniperTbbTask(TaskWatchDog& snoopy)
     : m_first(true),
@@ -43,10 +44,16 @@ tbb::task* SniperTbbTask::execute()
         m_first = false;
     }
 
-    if ( m_context.doNext() && m_snoopy.run_once() )
-    {
-        recycle_as_continuation();
-        next = this;
+    if ( m_context.doNext() ) {
+        try {
+            if ( m_snoopy.run_once() ) {
+                recycle_as_continuation();
+                next = this;
+            }
+        }
+        catch (StopRunProcess &e) {
+            // reach the end of this task
+        }
     }
 
     return next;
