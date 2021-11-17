@@ -3,7 +3,7 @@
 
 #include <string>
 #include <map>
-#include "SniperPrivate/GlobalStreamBase.h"
+#include "SniperMuster/GlobalStreamBase.h"
 
 class GlobalStreamFactory{//这是一个单例
 public:

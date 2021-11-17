@@ -17,8 +17,6 @@
    along with mt.sniper.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "Muster.h"
-#include "SniperPrivate/GlobalStreamBase.h"
-#include "SniperMuster/GlobalStreamFactory.h"
 #include <boost/python.hpp>
 
 namespace bp = boost::python;

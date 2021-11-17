@@ -1,5 +1,5 @@
 #include <boost/python.hpp>
-#include "SniperPrivate/GlobalStreamBase.h"
+#include "SniperMuster/GlobalStreamBase.h"
 #include "SniperMuster/GlobalStreamFactory.h"
 
 namespace bp = boost::python;
@@ -35,7 +35,7 @@ struct GlobalStreamBaseWrap: GlobalStreamBase, bp::wrapper<GlobalStreamBase>{
 void export_GlobalStream(){
     using namespace bp;
     //暴露出一个用于创建GlobalStream的工厂函数
-    def("createGlobalStream", createGlobalStream, return_value_policy<reference_existing_object>());
+    def("createGlobalStream", createGlobalStream, return_value_policy<manage_new_object>());
 
     class_<GlobalStreamBaseWrap, boost::noncopyable>
         ("GlobalStream", init<const std::string&>())

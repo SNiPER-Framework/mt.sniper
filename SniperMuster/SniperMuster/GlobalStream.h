@@ -21,7 +21,7 @@
 
 #include "ThreadAssistor.h"
 #include <string>
-#include "SniperPrivate/GlobalStreamBase.h"
+#include "SniperMuster/GlobalStreamBase.h"
 #include "SniperMuster/GlobalBuffer.h"
 #include "SniperKernel/Task.h"
 #include "SniperKernel/SniperLog.h"
@@ -84,16 +84,6 @@ GlobalStream<T>::GlobalStream(const std::string& name)
 template<typename T>
 GlobalStream<T>::~GlobalStream<T>()
 {
-    // waiting for the input Task
-    /*
-    m_ithread.stop();  //stop the input stream
-    m_buf->setOver(1);  //notify the input stream that being waiting
-    m_ithread.join();
-
-    // waiting for the output Task
-    m_buf->setOver(2);
-    m_othread.join();
-*/
     LogInfo << "releasing GlobalBuffer of " << m_name << std::endl;
     delete m_buf;
 }
@@ -119,7 +109,8 @@ bool GlobalStream<T>::configOutput(bp::api::object& functor)
 template<typename T>
 void GlobalStream<T>::join()
 {
-    // m_ithread.stop();  //stop the input stream
+    // waiting for the input Task
+    m_ithread.stop();  //stop the input stream
     m_buf->setOver(1);  //notify the input stream that being waiting
     m_ithread.join();
 
