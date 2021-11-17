@@ -1,6 +1,6 @@
 #include "Event/OECHeader.h"
 
-ClassImp(JM::OECHeader);
+ClassImp(JM::OECHeader)
 
 namespace JM{
     OECHeader::OECHeader(){

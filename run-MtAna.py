@@ -32,7 +32,8 @@ def GInput():
     riSvc = task.createSvc("RootInputSvc/InputSvc")
     riSvc.property("InputFile").set(["/sharefs/bes/zoujh/juno/MtAna/mt.sniper/0.5M_OEC.root"])
 
-    task.createAlg("PackFragAlg")
+    x = task.createAlg("PackFragAlg")
+    x.property("MaxFragSize").set(5)
 
     return task
 

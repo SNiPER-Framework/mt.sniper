@@ -1,7 +1,8 @@
 #include "Event/OECEvent.h"
 #include <iostream>
 
-ClassImp(JM::OECEvent);
+ClassImp(JM::OECEvent)
+
 namespace JM{
     OECEvent::OECEvent(){
         m_time=TTimeStamp(0,0);

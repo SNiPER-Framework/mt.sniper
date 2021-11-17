@@ -10,20 +10,17 @@ GlobalStreamBase* createGlobalStream(const char* name){
 }
 
 struct GlobalStreamBaseWrap: GlobalStreamBase, bp::wrapper<GlobalStreamBase>{
-    GlobalStreamBaseWrap(const std::string& name)
-        : GlobalStreamBase(name)
-    {}
 
     bool configInput(boost::python::api::object& functor){
-        return this->get_override("configInput")();
+        return this->get_override("configInput")(functor);
     }
 
     bool configOutput(boost::python::api::object& functor){
-        return this->get_override("configOutput")();
+        return this->get_override("configOutput")(functor);
     }
 
     void configBuffer(unsigned int capacity, unsigned int cordon){
-        this->get_override("configBuffer")();
+        this->get_override("configBuffer")(capacity, cordon);
     }
     
     void join() {
@@ -38,7 +35,7 @@ void export_GlobalStream(){
     def("createGlobalStream", createGlobalStream, return_value_policy<manage_new_object>());
 
     class_<GlobalStreamBaseWrap, boost::noncopyable>
-        ("GlobalStream", init<const std::string&>())
+        ("GlobalStreamBase", no_init)
         .def("configInput", pure_virtual(&GlobalStreamBase::configInput))
         .def("configOutput", pure_virtual(&GlobalStreamBase::configOutput))
         .def("configBuffer", pure_virtual(&GlobalStreamBase::configBuffer))

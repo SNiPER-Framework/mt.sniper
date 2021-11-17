@@ -74,8 +74,7 @@ namespace bp = boost::python;
 
 template<typename T>
 GlobalStream<T>::GlobalStream(const std::string& name)
-    : GlobalStreamBase(name),
-      m_buf(nullptr),
+    : m_buf(nullptr),
       m_name(name)
 {
     s_GBufMap.insert(std::make_pair(name, this));

@@ -2,11 +2,10 @@
 #define SNIPER_GLOBAL_STREAM_BASE_H
 
 #include <map>
-#include <boost/python.hpp>
+#include <boost/python/object_core.hpp>
 
 class GlobalStreamBase{
 public:
-    GlobalStreamBase(const std::string& name) {}
     virtual ~GlobalStreamBase() {}
     virtual bool configInput(boost::python::api::object& functor) = 0;
     virtual bool configOutput(boost::python::api::object& functor) = 0;

@@ -23,6 +23,6 @@ namespace SyncAssistor
 {
     void wait();
     void run();
-};
+}
 
 #endif

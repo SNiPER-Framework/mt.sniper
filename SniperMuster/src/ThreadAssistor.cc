@@ -21,6 +21,7 @@
 #include "MusterContext.h"
 #include "SniperKernel/Task.h"
 #include "SniperKernel/SniperException.h"
+#include <boost/python/extract.hpp>
 
 ThreadAssistor::ThreadAssistor()
 {

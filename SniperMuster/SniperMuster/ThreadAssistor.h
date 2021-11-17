@@ -19,7 +19,7 @@
 #ifndef SNIPER_THREAD_ASSISTOR_H
 #define SNIPER_THREAD_ASSISTOR_H
 
-#include <boost/python.hpp>
+#include <boost/python/object_core.hpp>
 #include <thread>
 
 class ThreadAssistor
