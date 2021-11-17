@@ -25,6 +25,10 @@ struct GlobalStreamBaseWrap: GlobalStreamBase, bp::wrapper<GlobalStreamBase>{
     void configBuffer(unsigned int capacity, unsigned int cordon){
         this->get_override("configBuffer")();
     }
+    
+    void join() {
+        this->get_override("join")();
+    }
 };
 
 
@@ -37,6 +41,7 @@ void export_GlobalStream(){
         ("GlobalStream", init<const std::string&>())
         .def("configInput", pure_virtual(&GlobalStreamBase::configInput))
         .def("configOutput", pure_virtual(&GlobalStreamBase::configOutput))
-        .def("configBuffer", pure_virtual(&GlobalStreamBase::configBuffer));
+        .def("configBuffer", pure_virtual(&GlobalStreamBase::configBuffer))
+        .def("join", pure_virtual(&GlobalStreamBase::join));
 }
 

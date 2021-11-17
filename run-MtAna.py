@@ -66,7 +66,7 @@ if __name__ == "__main__":
     first_time = True
 
     # the EvtMax in Sniper.Task is deactivated by Muster
-    muster.setEvtMax(10)
+    muster.setEvtMax(1000)
 
     # we will execute the HelloJob maximumly in 4 threads
     muster.config(HelloJob, 1)
@@ -75,10 +75,12 @@ if __name__ == "__main__":
     gs = SniperMuster.createGlobalStream("FragmentStream/GFragStream")
     gs.configInput(GInput)
     gs.configOutput(GOutput)
-    gs.configBuffer(50, 20)
+    gs.configBuffer(10000, 20)
 
     # TODO: show the configurations
     #muster.show()
 
     # spawn the threads and begin to run 
     muster.run()
+
+    gs.join()

@@ -43,6 +43,8 @@ class GlobalStream : public GlobalStreamBase
         virtual bool configOutput(boost::python::api::object& functor);
         virtual void configBuffer(unsigned int capacity, unsigned int cordon);
 
+        void join();
+
         const char*        scope()   { return ""; }
         const std::string& objName() { return m_name; }
 
@@ -83,6 +85,7 @@ template<typename T>
 GlobalStream<T>::~GlobalStream<T>()
 {
     // waiting for the input Task
+    /*
     m_ithread.stop();  //stop the input stream
     m_buf->setOver(1);  //notify the input stream that being waiting
     m_ithread.join();
@@ -90,7 +93,7 @@ GlobalStream<T>::~GlobalStream<T>()
     // waiting for the output Task
     m_buf->setOver(2);
     m_othread.join();
-
+*/
     LogInfo << "releasing GlobalBuffer of " << m_name << std::endl;
     delete m_buf;
 }
@@ -111,6 +114,18 @@ bool GlobalStream<T>::configOutput(bp::api::object& functor)
     m_othread.start(task);
 
     return true;
+}
+
+template<typename T>
+void GlobalStream<T>::join()
+{
+    // m_ithread.stop();  //stop the input stream
+    m_buf->setOver(1);  //notify the input stream that being waiting
+    m_ithread.join();
+
+    // waiting for the output Task
+    m_buf->setOver(2);
+    m_othread.join();
 }
 
 template<typename T>
