@@ -47,6 +47,9 @@ class GlobalBuffer
         std::shared_ptr<T> pop_front();
         Elem* next();
 
+        void  setStatus(bool status) { m_status = status; }
+        bool  status() { return m_status; }
+
         void  setDone(Elem* data);
 
         void  setOver(int step);
@@ -54,6 +57,7 @@ class GlobalBuffer
 
     private :
 
+        bool          m_status;
         unsigned int  m_capacity;
         unsigned int  m_cordon;
         Elem*         m_store;
@@ -80,7 +84,8 @@ GlobalBuffer<T>* GlobalBuffer<T>::FromStream(const std::string& name)
 
 template<typename T>
 GlobalBuffer<T>::GlobalBuffer(int capacity, int cordon)
-    : m_capacity(capacity),
+    : m_status(true),
+      m_capacity(capacity),
       m_cordon(cordon)
 {
     if ( m_capacity < 10 ) {

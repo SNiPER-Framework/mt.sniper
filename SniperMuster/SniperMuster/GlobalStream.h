@@ -83,6 +83,7 @@ GlobalStream<T>::GlobalStream(const std::string& name)
 template<typename T>
 GlobalStream<T>::~GlobalStream<T>()
 {
+    join();
     LogInfo << "releasing GlobalBuffer of " << m_name << std::endl;
     delete m_buf;
 }
@@ -108,6 +109,9 @@ bool GlobalStream<T>::configOutput(bp::api::object& functor)
 template<typename T>
 void GlobalStream<T>::join()
 {
+    // all worker threads have finished, do not fill the buffer anymore
+    m_buf->setStatus(false);
+
     // waiting for the input Task
     m_ithread.stop();  //stop the input stream
     m_buf->setOver(1);  //notify the input stream that being waiting
