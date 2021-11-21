@@ -20,12 +20,12 @@
 #define SNIPER_GLOBAL_STREAM_H
 
 #include "ThreadAssistor.h"
-#include <string>
 #include "SniperMuster/GlobalStreamBase.h"
 #include "SniperMuster/GlobalBuffer.h"
 #include "SniperKernel/Task.h"
 #include "SniperKernel/SniperLog.h"
 #include "SniperKernel/SniperException.h"
+#include "boost/python.hpp"
 #include <thread>
 #include <map>
 

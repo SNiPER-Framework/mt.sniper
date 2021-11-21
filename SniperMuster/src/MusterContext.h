@@ -37,8 +37,8 @@ class MusterContext
             return m_done++ < m_evtMax || m_infinite;
         }
 
-        int  evtMax() { return m_evtMax; }
-        void setEvtMax(int evtMax) { m_evtMax = evtMax; m_infinite = evtMax < 0; }
+        long  evtMax() { return m_evtMax; }
+        void setEvtMax(long evtMax) { m_evtMax = evtMax; m_infinite = evtMax < 0; }
         void set_threads(int n);
 
     private:
@@ -47,8 +47,8 @@ class MusterContext
         ~MusterContext() = default;
 
         bool m_infinite;
-        int  m_evtMax;
-        std::atomic_int m_done;
+        long  m_evtMax;
+        std::atomic_long m_done;
 
         static MusterContext* s_obj;
 
