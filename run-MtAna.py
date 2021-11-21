@@ -30,7 +30,7 @@ def GInput():
 
     import RootIOSvc
     riSvc = task.createSvc("RootInputSvc/InputSvc")
-    riSvc.property("InputFile").set(["/sharefs/bes/zoujh/juno/MtAna/mt.sniper/0.5M_OEC.root"])
+    riSvc.property("InputFile").set(["/sharefs/bes/zoujh/juno/MtAna/0.5M_OEC.root"])
 
     x = task.createAlg("PackFragAlg")
     x.property("MaxFragSize").set(5)
@@ -77,3 +77,4 @@ if __name__ == "__main__":
 
     # spawn the threads and begin to run 
     muster.run()
+    gs.join()

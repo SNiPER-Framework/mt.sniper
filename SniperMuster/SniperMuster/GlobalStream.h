@@ -83,7 +83,6 @@ GlobalStream<T>::GlobalStream(const std::string& name)
 template<typename T>
 GlobalStream<T>::~GlobalStream<T>()
 {
-    join();
     LogInfo << "releasing GlobalBuffer of " << m_name << std::endl;
     delete m_buf;
 }
