@@ -2,19 +2,27 @@
 
 def HelloJob():
     # configuration is just the same as a single thread job
-    import Sniper
     global ith
     ith += 1
     task = Sniper.Task(str(ith) +"-Job")
     task.setLogLevel(3)
 
-    import HelloWorld
-    task.property("algs").append("HelloAlg/x")
+    #task.property("algs").append("HelloWorld/x")
+    #x = task.find("x")
+    #x.property("VarBool").set(True)
+    #x.property("VecFloat").set([0.01])
+    #x.property("PairDVD").set([0.09, [1.1, 2.2, 3.3]])
+    #x.property("MapIntStr").set({1: 'str1'})
 
-    x = task.find("x")
-    x.property("VarString").set("GOD")
-    x.property("VectorInt").set(range(6))
-    x.property("MapStrInt").set( {"str%d"%v:v for v in range(6)} )
+    global svc
+    task.addSvc(svc)
+
+    alg = task.createAlg("SvcAndToolAlg")
+    toolname = "tool1"
+    alg.property("OwnedTool").set(toolname)
+    tool = alg.createTool("DummyTool/"+toolname)
+    tool.setDescription("a DummyTool instance owned by alg")
+    tool.setLogLevel(4)
 
     global first_time
     if first_time:
@@ -25,6 +33,12 @@ def HelloJob():
 
 
 if __name__ == "__main__":
+
+    import Sniper
+    import SniperCoreUsages
+    global svc
+    svc = Sniper.create("SharedElem<DummySvc>/SharedSvc")
+    svc.setDescription("a service instance that share by different Tasks")
 
     import SniperMuster
     muster = SniperMuster.Muster()
