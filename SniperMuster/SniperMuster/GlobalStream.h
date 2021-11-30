@@ -23,72 +23,55 @@
 #include "SniperMuster/GlobalStreamBase.h"
 #include "SniperMuster/GlobalBuffer.h"
 #include "SniperKernel/Task.h"
-#include "SniperKernel/SniperLog.h"
 #include "SniperKernel/SniperException.h"
 #include "boost/python.hpp"
-#include <thread>
-#include <map>
 
 template<typename T>
 class GlobalStream : public GlobalStreamBase
 {
-    public :
+public:
+    typedef GlobalBuffer<T> BufferType;
 
-        typedef GlobalBuffer<T> BufferType;
+    GlobalStream(const std::string &name);
+    virtual ~GlobalStream();
 
-        GlobalStream(const std::string& name);
-        virtual ~GlobalStream();
+    virtual bool configInput(boost::python::api::object &functor) override;
+    virtual bool configOutput(boost::python::api::object &functor) override;
+    virtual void configBuffer(unsigned int capacity, unsigned int cordon) override;
 
-        virtual bool configInput(boost::python::api::object& functor);
-        virtual bool configOutput(boost::python::api::object& functor);
-        virtual void configBuffer(unsigned int capacity, unsigned int cordon);
+    void join() override;
 
-        void join();
+    BufferType *buffer() { return m_buf; }
 
-        const char*        scope()   { return ""; }
-        const std::string& objName() { return m_name; }
+    static BufferType *GetBuffer(const std::string &name);
 
-        static BufferType* GetBuffer(const std::string& name);
+private:
+    BufferType *m_buf;
+    ThreadAssistor m_ithread;
+    ThreadAssistor m_othread;
 
-        BufferType*      buffer()  { return m_buf; }
-
-    private :
-
-        static std::map<std::string, GlobalStream*> s_GBufMap;
-
-        BufferType*      m_buf;
-        const std::string  m_name;
-
-        ThreadAssistor     m_ithread;
-        ThreadAssistor     m_othread;
-
-        // following interfaces are not supported
-        GlobalStream() = delete;
-        GlobalStream(const GlobalStream&) = delete;
-        GlobalStream& operator=(const GlobalStream&) = delete;
+    static std::map<std::string, GlobalStream *> s_GBufMap;
 };
-
 
 namespace bp = boost::python;
 
-
-template<typename T>
-GlobalStream<T>::GlobalStream(const std::string& name)
-    : m_buf(nullptr),
-      m_name(name)
+template <typename T>
+GlobalStream<T>::GlobalStream(const std::string &name)
+    : GlobalStreamBase(name),
+      m_buf(nullptr)
 {
     s_GBufMap.insert(std::make_pair(name, this));
 }
 
-template<typename T>
+template <typename T>
 GlobalStream<T>::~GlobalStream<T>()
 {
-    LogInfo << "releasing GlobalBuffer of " << m_name << std::endl;
+    LogInfo << "releasing GlobalBuffer of " << objName() << std::endl;
     delete m_buf;
 }
 
-template<typename T>
-bool GlobalStream<T>::configInput(bp::api::object& functor)
+template <typename T>
+bool GlobalStream<T>::configInput(bp::api::object &functor)
 {
     bp::api::object task = functor();
     m_ithread.start(task);
@@ -96,8 +79,8 @@ bool GlobalStream<T>::configInput(bp::api::object& functor)
     return true;
 }
 
-template<typename T>
-bool GlobalStream<T>::configOutput(bp::api::object& functor)
+template <typename T>
+bool GlobalStream<T>::configOutput(bp::api::object &functor)
 {
     bp::api::object task = functor();
     m_othread.start(task);
@@ -105,7 +88,7 @@ bool GlobalStream<T>::configOutput(bp::api::object& functor)
     return true;
 }
 
-template<typename T>
+template <typename T>
 void GlobalStream<T>::join()
 {
     // all worker threads have finished, do not fill the buffer anymore
@@ -121,23 +104,25 @@ void GlobalStream<T>::join()
     m_othread.join();
 }
 
-template<typename T>
+template <typename T>
 void GlobalStream<T>::configBuffer(unsigned int capacity, unsigned int cordon)
 {
     m_buf = new BufferType(capacity, cordon);
 }
 
-template<typename T>
-typename GlobalStream<T>::BufferType* GlobalStream<T>::GetBuffer(const std::string& name){
+template <typename T>
+typename GlobalStream<T>::BufferType *GlobalStream<T>::GetBuffer(const std::string &name)
+{
     auto it = s_GBufMap.find(name);
-    if ( it == s_GBufMap.end() ) {
+    if (it == s_GBufMap.end())
+    {
         throw SniperException(std::string("No GlobalStream ") + name);
     }
 
     return it->second->buffer();
 }
 
-template<typename T>
-typename std::map<std::string, GlobalStream<T>*> GlobalStream<T>:: s_GBufMap;
+template <typename T>
+typename std::map<std::string, GlobalStream<T> *> GlobalStream<T>::s_GBufMap;
 
 #endif

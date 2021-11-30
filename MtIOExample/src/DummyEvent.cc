@@ -17,8 +17,6 @@
    along with mt.sniper.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "DummyEvent.h"
-#include "SniperMuster/GlobalStream.h"
-#include "SniperMuster/GlobalStreamFactory.h"
 
 std::atomic_int DummyEvent::m_num{0};
 
@@ -41,5 +39,9 @@ DummyEvent::~DummyEvent()
     --m_num;
 }
 
+/// the declaration of dynamic stream creation
+#include "SniperMuster/GlobalStream.h"
+#include "SniperKernel/DeclareDLE.h"
+
 typedef GlobalStream<DummyEvent> DummyEventStream;
-DECLARE_GLOBAL_STREAM(DummyEventStream);
+SNIPER_DECLARE_DLE(DummyEventStream);
