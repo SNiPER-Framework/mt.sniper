@@ -21,7 +21,7 @@
 
 #include "SniperKernel/IIncidentHandler.h"
 
-class Task;
+class ExecUnit;
 class DummyInputSvc;
 class DummyStore;
 
@@ -29,7 +29,7 @@ class BeginEvtHdl : public IIncidentHandler
 {
     public :
 
-        BeginEvtHdl(Task* par);
+        BeginEvtHdl(ExecUnit* par);
 
         bool handle(Incident& incident);
 

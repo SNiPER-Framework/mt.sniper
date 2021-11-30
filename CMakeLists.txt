@@ -64,7 +64,7 @@ add_definitions(-DHAVE_PYTHON)
 unset(PyPkgName)
 
 add_subdirectory(SniperMuster)
-#add_subdirectory(MtIOExample)
+add_subdirectory(MtIOExample)
 
 #Generate and install configure files
 include(cmake/MtSNiPERCreateConfig.cmake)

@@ -19,6 +19,7 @@
 #ifndef DUMMY_OUTPUT_SVC_H
 #define DUMMY_OUTPUT_SVC_H
 
+#include "DummyEvent.h"
 #include "SniperMuster/GlobalBuffer.h"
 #include "SniperKernel/SvcBase.h"
 
@@ -32,11 +33,11 @@ class DummyOutputSvc : public SvcBase
         bool initialize();
         bool finalize();
 
-        void setDone(GlobalBuffer::Elem* ref);
+        void setDone(GlobalBuffer<DummyEvent>::Elem* ref);
 
     private :
 
-        GlobalBuffer* m_gbuf;
+        GlobalBuffer<DummyEvent>* m_gbuf;
 };
 
 #endif

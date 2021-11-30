@@ -21,22 +21,20 @@
 
 #include "SniperKernel/IIncidentHandler.h"
 
-class Task;
+class ExecUnit;
 class DummyOutputSvc;
 class DummyStore;
 
 class EndEvtHdl : public IIncidentHandler
 {
-    public :
+public:
+    EndEvtHdl(ExecUnit *par);
 
-        EndEvtHdl(Task* par);
+    bool handle(Incident &incident);
 
-        bool handle(Incident& incident);
-
-    private :
-
-        DummyOutputSvc* m_oSvc;
-        DummyStore*     m_store;
+private:
+    DummyOutputSvc *m_oSvc;
+    DummyStore *m_store;
 };
 
 #endif

@@ -23,7 +23,7 @@ DummyStore::~DummyStore()
 {
 }
 
-void DummyStore::adopt(DummyEvent* evt)
+void DummyStore::adopt(std::shared_ptr<DummyEvent> &evt)
 {
     m_evt = evt;
 }

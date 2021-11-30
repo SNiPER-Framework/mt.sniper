@@ -6,5 +6,5 @@ target_link_libraries(MtIOExample PRIVATE SniperMuster)
 
 # install
 install(TARGETS MtIOExample DESTINATION ${CMAKE_INSTALL_LIBDIR})
-install(DIRECTORY python/MtIOExample DESTINATION ${CMAKE_INSTALL_PYTHONDIR})
+install(FILES python/MtIOExample.py DESTINATION ${CMAKE_INSTALL_PYTHONDIR})
 install(FILES share/run-MtIO.py DESTINATION ${CMAKE_INSTALL_DATADIR})

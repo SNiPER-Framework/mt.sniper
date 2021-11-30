@@ -27,19 +27,15 @@ class Task;
 
 class DummyMemMgr : public SvcBase
 {
-    public :
+public:
+    DummyMemMgr(const std::string &name);
+    virtual ~DummyMemMgr();
 
-        DummyMemMgr(const std::string& name);
-        virtual ~DummyMemMgr();
+    bool initialize();
+    bool finalize();
 
-        bool initialize();
-        bool finalize();
-
-    private :
-
-        Task* m_par;
-        std::list<IIncidentHandler*> m_icdts;
-
+private:
+    std::list<IIncidentHandler *> m_icdts;
 };
 
 #endif

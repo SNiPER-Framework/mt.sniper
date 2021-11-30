@@ -60,7 +60,7 @@ if __name__ == "__main__":
     muster.config(HelloJob, 4)
 
     # I/O and global buffer
-    gs = SniperMuster.GlobalStream("GEvtStream")
+    gs = SniperMuster.createGlobalStream("DummyEventStream/GEvtStream")
     gs.configInput(GInput)
     gs.configOutput(GOutput)
     gs.configBuffer(50, 20)
@@ -70,3 +70,4 @@ if __name__ == "__main__":
 
     # spawn the threads and begin to run 
     muster.run()
+    gs.join()

@@ -17,6 +17,7 @@
    along with mt.sniper.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "DummyOutputSvc.h"
+#include "SniperMuster/GlobalStream.h"
 #include "SniperKernel/SvcFactory.h"
 
 DECLARE_SERVICE(DummyOutputSvc);
@@ -32,7 +33,8 @@ DummyOutputSvc::~DummyOutputSvc()
 
 bool DummyOutputSvc::initialize()
 {
-    m_gbuf = GlobalBuffer::FromStream("GEvtStream");
+    //m_gbuf = GlobalBuffer<DummyEvent>::FromStream("GEvtStream");
+    m_gbuf = GlobalStream<DummyEvent>::GetBuffer("GEvtStream");
     return true;
 }
 
@@ -41,7 +43,7 @@ bool DummyOutputSvc::finalize()
     return true;
 }
 
-void DummyOutputSvc::setDone(GlobalBuffer::Elem* ref)
+void DummyOutputSvc::setDone(GlobalBuffer<DummyEvent>::Elem* ref)
 {
     return m_gbuf->setDone(ref);
 }

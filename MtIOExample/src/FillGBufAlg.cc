@@ -21,6 +21,7 @@
 #include "SniperKernel/AlgFactory.h"
 #include "SniperKernel/SniperLog.h"
 #include "SniperMuster/GlobalBuffer.h"
+#include "SniperMuster/GlobalStream.h"
 
 class FillGBufAlg : public AlgBase
 {
@@ -36,7 +37,7 @@ class FillGBufAlg : public AlgBase
     private :
 
         int           m_max;
-        GlobalBuffer* m_gbuf;
+        GlobalBuffer<DummyEvent>* m_gbuf;
 };
 
 DECLARE_ALGORITHM(FillGBufAlg);
@@ -53,7 +54,8 @@ FillGBufAlg::~FillGBufAlg()
 
 bool FillGBufAlg::initialize()
 {
-    m_gbuf = GlobalBuffer::FromStream("GEvtStream");
+    //m_gbuf = GlobalBuffer<DummyEvent>::FromStream("GEvtStream");
+    m_gbuf = GlobalStream<DummyEvent>::GetBuffer("GEvtStream");
     return true;
 }
 
@@ -63,11 +65,11 @@ bool FillGBufAlg::execute()
 
     if ( gid == m_max ) {
         m_gbuf->push_back(nullptr);
-        getParent()->finalize();
+        getParent()->stop();
         return true;
     }
 
-    m_gbuf->push_back(new DummyEvent(++gid));
+    m_gbuf->push_back(std::shared_ptr<DummyEvent>(new DummyEvent(++gid)));
 
     return true;
 }

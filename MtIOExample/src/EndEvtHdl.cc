@@ -20,13 +20,13 @@
 #include "DummyOutputSvc.h"
 #include "DummyStore.h"
 #include "DummyEvent.h"
-#include "SniperKernel/Task.h"
+#include "SniperKernel/ExecUnit.h"
 #include "SniperKernel/SniperPtr.h"
 #include "SniperKernel/SniperDataPtr.h"
 #include "SniperKernel/SniperException.h"
 #include "SniperKernel/Incident.h"
 
-EndEvtHdl::EndEvtHdl(Task* par)
+EndEvtHdl::EndEvtHdl(ExecUnit* par)
     : IIncidentHandler(par)
 {
     SniperPtr<DummyOutputSvc> oSvc(par, "OutputSvc");

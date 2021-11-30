@@ -21,6 +21,7 @@
 #include "SniperKernel/AlgFactory.h"
 #include "SniperKernel/SniperLog.h"
 #include "SniperMuster/GlobalBuffer.h"
+#include "SniperMuster/GlobalStream.h"
 #include <fstream>
 
 class WriteGBufAlg : public AlgBase
@@ -36,7 +37,7 @@ class WriteGBufAlg : public AlgBase
 
     private :
 
-        GlobalBuffer* m_gbuf;
+        GlobalBuffer<DummyEvent>* m_gbuf;
 
         std::string   m_fname;
         std::ofstream m_ofs;
@@ -56,7 +57,8 @@ WriteGBufAlg::~WriteGBufAlg()
 
 bool WriteGBufAlg::initialize()
 {
-    m_gbuf = GlobalBuffer::FromStream("GEvtStream");
+    //m_gbuf = GlobalBuffer<DummyEvent>::FromStream("GEvtStream");
+    m_gbuf = GlobalStream<DummyEvent>::GetBuffer("GEvtStream");
 
     if ( ! m_fname.empty() ) {
         m_ofs.open(m_fname, std::ios::trunc);
@@ -67,16 +69,15 @@ bool WriteGBufAlg::initialize()
 
 bool WriteGBufAlg::execute()
 {
-    DummyEvent* evt = static_cast<DummyEvent*>(m_gbuf->pop_front());
+    auto evt = m_gbuf->pop_front();
 
     if ( evt != nullptr ) {
         if ( ! m_fname.empty() ) {
             m_ofs << evt->getGid() << '\t' << evt->getLid() << '\t' << evt->getNum() << std::endl;
         }
-        delete evt;
     }
     else {
-        m_par->finalize();
+        m_par->stop();
     }
 
     return true;

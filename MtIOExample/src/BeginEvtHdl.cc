@@ -20,13 +20,13 @@
 #include "DummyInputSvc.h"
 #include "DummyStore.h"
 #include "DummyEvent.h"
-#include "SniperKernel/Task.h"
+#include "SniperKernel/ExecUnit.h"
 #include "SniperKernel/SniperPtr.h"
 #include "SniperKernel/SniperDataPtr.h"
 #include "SniperKernel/SniperException.h"
 #include "SniperKernel/Incident.h"
 
-BeginEvtHdl::BeginEvtHdl(Task* par)
+BeginEvtHdl::BeginEvtHdl(ExecUnit* par)
     : IIncidentHandler(par)
 {
     SniperPtr<DummyInputSvc> iSvc(par, "InputSvc");
@@ -49,11 +49,10 @@ bool BeginEvtHdl::handle(Incident& /*incident*/)
 {
     auto ref = m_iSvc->next();
     if ( ref != nullptr ) {
-        auto evt = static_cast<DummyEvent*>(ref->dptr);
-        m_store->adopt(evt);
+        m_store->adopt(ref->dptr);
         m_store->setRef(ref);
         return true;
     }
 
-    return m_domain.finalize();
+    return m_domain.stop();
 }
