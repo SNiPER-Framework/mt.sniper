@@ -20,7 +20,6 @@
 #include "SniperKernel/AlgBase.h"
 #include "SniperKernel/AlgFactory.h"
 #include "SniperKernel/SniperLog.h"
-#include "SniperMuster/GlobalBuffer.h"
 #include "SniperMuster/GlobalStream.h"
 
 class FillGBufAlg : public AlgBase
@@ -54,7 +53,6 @@ FillGBufAlg::~FillGBufAlg()
 
 bool FillGBufAlg::initialize()
 {
-    //m_gbuf = GlobalBuffer<DummyEvent>::FromStream("GEvtStream");
     m_gbuf = GlobalStream<DummyEvent>::GetBuffer("GEvtStream");
     return true;
 }

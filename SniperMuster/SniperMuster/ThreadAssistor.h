@@ -1,6 +1,5 @@
-/* Copyright (C) 2018
-   Jiaheng Zou <zoujh@ihep.ac.cn> Tao Lin <lintao@ihep.ac.cn>
-   Weidong Li <liwd@ihep.ac.cn> Xingtao Huang <huangxt@sdu.edu.cn>
+/* Copyright (C) 2018-2021
+   Institute of High Energy Physics and Shandong University
    This file is part of mt.sniper.
  
    mt.sniper is free software: you can redistribute it and/or modify
@@ -24,24 +23,19 @@
 
 class ThreadAssistor
 {
-    public :
+public:
+    ThreadAssistor();
+    virtual ~ThreadAssistor();
 
-        ThreadAssistor();
-        virtual ~ThreadAssistor();
+    void start(boost::python::api::object &task);
+    void stop();
+    void join();
 
-        void start(boost::python::api::object& task);
+private:
+    void run();
 
-        void stop();
-
-        void join();
-
-    private :
-
-        void run();
-
-        std::thread m_thread;
-
-        boost::python::api::object m_task;
+    std::thread m_thread;
+    boost::python::api::object m_task;
 };
 
 #endif

@@ -1,6 +1,5 @@
-/* Copyright (C) 2018
-   Jiaheng Zou <zoujh@ihep.ac.cn> Tao Lin <lintao@ihep.ac.cn>
-   Weidong Li <liwd@ihep.ac.cn> Xingtao Huang <huangxt@sdu.edu.cn>
+/* Copyright (C) 2018-2021
+   Institute of High Energy Physics and Shandong University
    This file is part of mt.sniper.
  
    mt.sniper is free software: you can redistribute it and/or modify
@@ -19,9 +18,9 @@
 #ifndef SNIPER_GLOBAL_STREAM_H
 #define SNIPER_GLOBAL_STREAM_H
 
-#include "ThreadAssistor.h"
 #include "SniperMuster/GlobalStreamBase.h"
 #include "SniperMuster/GlobalBuffer.h"
+#include "ThreadAssistor.h"
 #include "SniperKernel/Task.h"
 #include "SniperKernel/SniperException.h"
 #include "boost/python.hpp"
@@ -30,37 +29,42 @@ template<typename T>
 class GlobalStream : public GlobalStreamBase
 {
 public:
-    typedef GlobalBuffer<T> BufferType;
+    static GlobalBuffer<T> *GetBuffer(const std::string &name);
 
     GlobalStream(const std::string &name);
     virtual ~GlobalStream();
 
+    virtual void configBuffer(unsigned int capacity, unsigned int cordon) override;
     virtual bool configInput(boost::python::api::object &functor) override;
     virtual bool configOutput(boost::python::api::object &functor) override;
-    virtual void configBuffer(unsigned int capacity, unsigned int cordon) override;
 
     void join() override;
 
-    BufferType *buffer() { return m_buf; }
-
-    static BufferType *GetBuffer(const std::string &name);
+    GlobalBuffer<T> *buffer() { return m_buf; }
 
 private:
-    BufferType *m_buf;
+    GlobalBuffer<T> *m_buf;
     ThreadAssistor m_ithread;
     ThreadAssistor m_othread;
-
-    static std::map<std::string, GlobalStream *> s_GBufMap;
 };
 
-namespace bp = boost::python;
+template <typename T>
+GlobalBuffer<T> *GlobalStream<T>::GetBuffer(const std::string &name)
+{
+    auto it = s_GBufMap.find(name);
+    if (it == s_GBufMap.end())
+    {
+        throw SniperException(std::string("No GlobalStream ") + name);
+    }
+    auto stream = dynamic_cast<GlobalStream<T>*>(it->second);
+    return stream->buffer();
+}
 
 template <typename T>
 GlobalStream<T>::GlobalStream(const std::string &name)
     : GlobalStreamBase(name),
       m_buf(nullptr)
 {
-    s_GBufMap.insert(std::make_pair(name, this));
 }
 
 template <typename T>
@@ -71,18 +75,24 @@ GlobalStream<T>::~GlobalStream<T>()
 }
 
 template <typename T>
-bool GlobalStream<T>::configInput(bp::api::object &functor)
+void GlobalStream<T>::configBuffer(unsigned int capacity, unsigned int cordon)
 {
-    bp::api::object task = functor();
+    m_buf = new GlobalBuffer<T>(capacity, cordon);
+}
+
+template <typename T>
+bool GlobalStream<T>::configInput(boost::python::api::object &functor)
+{
+    boost::python::api::object task = functor();
     m_ithread.start(task);
 
     return true;
 }
 
 template <typename T>
-bool GlobalStream<T>::configOutput(bp::api::object &functor)
+bool GlobalStream<T>::configOutput(boost::python::api::object &functor)
 {
-    bp::api::object task = functor();
+    boost::python::api::object task = functor();
     m_othread.start(task);
 
     return true;
@@ -103,26 +113,5 @@ void GlobalStream<T>::join()
     m_buf->setOver(2);
     m_othread.join();
 }
-
-template <typename T>
-void GlobalStream<T>::configBuffer(unsigned int capacity, unsigned int cordon)
-{
-    m_buf = new BufferType(capacity, cordon);
-}
-
-template <typename T>
-typename GlobalStream<T>::BufferType *GlobalStream<T>::GetBuffer(const std::string &name)
-{
-    auto it = s_GBufMap.find(name);
-    if (it == s_GBufMap.end())
-    {
-        throw SniperException(std::string("No GlobalStream ") + name);
-    }
-
-    return it->second->buffer();
-}
-
-template <typename T>
-typename std::map<std::string, GlobalStream<T> *> GlobalStream<T>::s_GBufMap;
 
 #endif

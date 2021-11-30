@@ -33,7 +33,6 @@ DummyInputSvc::~DummyInputSvc()
 
 bool DummyInputSvc::initialize()
 {
-    //m_gbuf = GlobalBuffer<DummyEvent>::FromStream("GEvtStream");
     m_gbuf = GlobalStream<DummyEvent>::GetBuffer("GEvtStream");
     return true;
 }

@@ -17,21 +17,60 @@
    along with mt.sniper.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "Muster.h"
+#include "SniperMuster/GlobalStreamBase.h"
+#include "SniperKernel/Sniper.h"
 #include <boost/python.hpp>
 
 namespace bp = boost::python;
 
-void export_GlobalStream();
+//用于暴露给python 产生globalStream
+GlobalStreamBase* createGlobalStream(const char* name){
+    return dynamic_cast<GlobalStreamBase *>(Sniper::create(name));
+}
+
+struct GlobalStreamBaseWrap : GlobalStreamBase, bp::wrapper<GlobalStreamBase>
+{
+    GlobalStreamBaseWrap(const std::string &name)
+        : GlobalStreamBase(name)
+    {
+    }
+
+    bool configInput(boost::python::api::object &functor)
+    {
+        return this->get_override("configInput")(functor);
+    }
+
+    bool configOutput(boost::python::api::object &functor)
+    {
+        return this->get_override("configOutput")(functor);
+    }
+
+    void configBuffer(unsigned int capacity, unsigned int cordon)
+    {
+        this->get_override("configBuffer")(capacity, cordon);
+    }
+
+    void join()
+    {
+        this->get_override("join")();
+    }
+};
 
 BOOST_PYTHON_MODULE(libSniperMuster)
 {
-    bp::class_<Muster, boost::noncopyable>("Muster")
+    using namespace bp;
+
+    def("createGlobalStream", createGlobalStream, return_value_policy<manage_new_object>());
+
+    class_<Muster, boost::noncopyable>("Muster")
         .def("setEvtMax", &Muster::setEvtMax)
         .def("config", &Muster::config)
         .def("append", &Muster::append)
-        .def("run", &Muster::run)
-        ;
+        .def("run", &Muster::run);
 
-    export_GlobalStream();
-
+    class_<GlobalStreamBaseWrap, boost::noncopyable>("GlobalStreamBase", init<const std::string &>())
+        .def("configInput", pure_virtual(&GlobalStreamBase::configInput))
+        .def("configOutput", pure_virtual(&GlobalStreamBase::configOutput))
+        .def("configBuffer", pure_virtual(&GlobalStreamBase::configBuffer))
+        .def("join", pure_virtual(&GlobalStreamBase::join));
 }

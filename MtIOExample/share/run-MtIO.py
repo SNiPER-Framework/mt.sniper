@@ -61,9 +61,9 @@ if __name__ == "__main__":
 
     # I/O and global buffer
     gs = SniperMuster.createGlobalStream("DummyEventStream/GEvtStream")
+    gs.configBuffer(50, 20)  #the buffer must be created before the I/O tasks
     gs.configInput(GInput)
     gs.configOutput(GOutput)
-    gs.configBuffer(50, 20)
 
     # TODO: show the configurations
     #muster.show()

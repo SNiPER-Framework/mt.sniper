@@ -20,7 +20,6 @@
 #include "SniperKernel/AlgBase.h"
 #include "SniperKernel/AlgFactory.h"
 #include "SniperKernel/SniperLog.h"
-#include "SniperMuster/GlobalBuffer.h"
 #include "SniperMuster/GlobalStream.h"
 #include <fstream>
 
@@ -57,7 +56,6 @@ WriteGBufAlg::~WriteGBufAlg()
 
 bool WriteGBufAlg::initialize()
 {
-    //m_gbuf = GlobalBuffer<DummyEvent>::FromStream("GEvtStream");
     m_gbuf = GlobalStream<DummyEvent>::GetBuffer("GEvtStream");
 
     if ( ! m_fname.empty() ) {
