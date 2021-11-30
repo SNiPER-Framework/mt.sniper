@@ -23,9 +23,34 @@
 
 namespace bp = boost::python;
 
-//用于暴露给python 产生globalStream
-GlobalStreamBase* createGlobalStream(const char* name){
-    return dynamic_cast<GlobalStreamBase *>(Sniper::create(name));
+namespace SniperMuster
+{
+    //用于暴露给python 产生globalStream
+    GlobalStreamBase *createGlobalStream(const std::string &name)
+    {
+        return dynamic_cast<GlobalStreamBase *>(Sniper::create(name));
+    }
+
+    // to create worker Tasks
+    DLElement *createWorker(const std::string &name)
+    {
+        static int n_threads = 0;
+
+        auto sep = name.find('/');
+        auto _type = name.substr(0, sep);
+        auto _name = (sep != std::string::npos) ? name.substr(sep+1) : name;
+
+        std::stringstream ss;
+        ss << _type << "/(" << ++n_threads << ')' << _name;
+
+        return Sniper::create(ss.str());
+    }
+
+    void show()
+    {
+        //TODO: xxx
+        std::cout << "a place holder for the SniperMuster::show()" << std::endl;
+    }
 }
 
 struct GlobalStreamBaseWrap : GlobalStreamBase, bp::wrapper<GlobalStreamBase>
@@ -60,7 +85,9 @@ BOOST_PYTHON_MODULE(libSniperMuster)
 {
     using namespace bp;
 
-    def("createGlobalStream", createGlobalStream, return_value_policy<manage_new_object>());
+    def("createGlobalStream", SniperMuster::createGlobalStream, return_value_policy<manage_new_object>());
+    def("createWorker", SniperMuster::createWorker, return_value_policy<manage_new_object>());
+    def("show", SniperMuster::show);
 
     class_<Muster, boost::noncopyable>("Muster")
         .def("setEvtMax", &Muster::setEvtMax)

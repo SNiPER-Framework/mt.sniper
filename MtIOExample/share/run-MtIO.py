@@ -1,24 +1,17 @@
 #!/usr/bin/env python
 
 def HelloJob():
-    # configuration is just the same as a single thread job
-    import Sniper
-    global ith
-    ith += 1
-    task = Sniper.Task(str(ith) +"-Job")
+    import SniperMuster
+    task = SniperMuster.createWorker("Task/Job")
 
+    # configuration is just the same as a single thread job
     import MtIOExample
     x = task.createAlg("DummyIOAlg/x")
-    #x.property("VarString").set("GOD")
 
     mMgr = task.createSvc("DummyMemMgr")
     iSvc = task.createSvc("DummyInputSvc/InputSvc")
     oSvc = task.createSvc("DummyOutputSvc/OutputSvc")
 
-    global first_time
-    if first_time:
-        task.show()
-        first_time = False
     # instead of task.run(), we must return the task object here
     return task
 
@@ -48,11 +41,6 @@ if __name__ == "__main__":
     import SniperMuster
     muster = SniperMuster.Muster()
 
-    global ith
-    ith = 0
-    global first_time
-    first_time = True
-
     # the EvtMax in Sniper.Task is deactivated by Muster
     muster.setEvtMax(100000)
 
@@ -65,8 +53,8 @@ if __name__ == "__main__":
     gs.configInput(GInput)
     gs.configOutput(GOutput)
 
-    # TODO: show the configurations
-    #muster.show()
+    # show the configurations
+    SniperMuster.show()
 
     # spawn the threads and begin to run 
     muster.run()
