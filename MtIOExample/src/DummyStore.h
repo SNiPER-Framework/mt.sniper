@@ -19,32 +19,27 @@
 #ifndef DUMMY_STORE_H
 #define DUMMY_STORE_H
 
+#include "DummyEvent.h"
 #include "SniperKernel/IDataBlock.h"
 #include "SniperMuster/GlobalBuffer.h"
 #include <memory>
 
-class DummyEvent;
-
 class DummyStore : public IDataBlock
 {
-    public :
+public:
+    DummyStore() : m_evt(nullptr) {}
+    virtual ~DummyStore();
 
-        DummyStore() : m_evt(nullptr) {}
-        virtual ~DummyStore();
+    void adopt(std::shared_ptr<DummyEvent> &evt);
+    std::shared_ptr<DummyEvent> &event() { return m_evt; }
 
-        void adopt(DummyEvent* evt);
+    // for the convenience of testing
+    void setRef(GlobalBuffer<DummyEvent>::Elem *ref) { m_ref = ref; }
+    GlobalBuffer<DummyEvent>::Elem *ref() { return m_ref; }
 
-        DummyEvent* event() { return m_evt; }
-
-        // for the convenience of testing
-        void setRef(GlobalBuffer::Elem* ref) { m_ref = ref; }
-        GlobalBuffer::Elem* ref() { return m_ref; }
-
-    private :
-
-        DummyEvent* m_evt;
-
-        GlobalBuffer::Elem* m_ref;
+private:
+    std::shared_ptr<DummyEvent> m_evt;
+    GlobalBuffer<DummyEvent>::Elem *m_ref;
 };
 
 #endif

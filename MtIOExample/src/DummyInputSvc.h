@@ -19,6 +19,7 @@
 #ifndef DUMMY_INPUT_SVC_H
 #define DUMMY_INPUT_SVC_H
 
+#include "DummyEvent.h"
 #include "SniperMuster/GlobalBuffer.h"
 #include "SniperKernel/SvcBase.h"
 
@@ -32,11 +33,11 @@ class DummyInputSvc : public SvcBase
         bool initialize();
         bool finalize();
 
-        GlobalBuffer::Elem* next();
+        GlobalBuffer<DummyEvent>::Elem* next();
 
     private :
 
-        GlobalBuffer* m_gbuf;
+        GlobalBuffer<DummyEvent>* m_gbuf;
 };
 
 #endif

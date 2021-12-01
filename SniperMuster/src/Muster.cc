@@ -90,5 +90,7 @@ bool Muster::run()
     LogInfo << "totally open " << m_threads << " tbb threads" << std::endl;
     tbb::task::spawn_root_and_wait(*m_supervisor);
 
+    LogInfo << "Muster.run() is finished" << std::endl;
+
     return true;
 }

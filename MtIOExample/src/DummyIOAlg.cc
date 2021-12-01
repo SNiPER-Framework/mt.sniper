@@ -25,7 +25,7 @@
 
 DECLARE_ALGORITHM(DummyIOAlg);
 
-DummyIOAlg::DummyIOAlg(const std::string& name)
+DummyIOAlg::DummyIOAlg(const std::string &name)
     : AlgBase(name),
       m_count(0)
 {
@@ -41,7 +41,8 @@ bool DummyIOAlg::initialize()
     LogInfo << " initialized successfully" << std::endl;
 
     SniperDataPtr<DummyStore> pStore(m_par, "/Event");
-    if ( pStore.invalid() ) {
+    if (pStore.invalid())
+    {
         LogFatal << "Cann't find the data in memory" << std::endl;
         return false;
     }
@@ -56,7 +57,7 @@ bool DummyIOAlg::execute()
 
     ++m_count;
 
-    DummyEvent* evt = m_store->event();
+    DummyEvent *evt = m_store->event().get();
     evt->setLid(m_count);
 
     LogInfo << '\t' << evt->getGid() << '\t' << evt->getLid() << '\t' << evt->getNum() << std::endl;
@@ -67,6 +68,5 @@ bool DummyIOAlg::execute()
 bool DummyIOAlg::finalize()
 {
     LogInfo << " finalized successfully" << std::endl;
-
     return true;
 }
