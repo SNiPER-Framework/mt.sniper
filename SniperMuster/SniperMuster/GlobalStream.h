@@ -38,7 +38,8 @@ public:
     virtual bool configInput(boost::python::api::object &functor) override;
     virtual bool configOutput(boost::python::api::object &functor) override;
 
-    void join() override;
+    virtual void join() override;
+    virtual SniperJSON json() override { return m_json; }
 
     GlobalBuffer<T> *buffer() { return m_buf; }
 
@@ -46,6 +47,7 @@ private:
     GlobalBuffer<T> *m_buf;
     ThreadAssistor m_ithread;
     ThreadAssistor m_othread;
+    SniperJSON m_json;
 };
 
 template <typename T>
@@ -65,6 +67,12 @@ GlobalStream<T>::GlobalStream(const std::string &name)
     : GlobalStreamBase(name),
       m_buf(nullptr)
 {
+    m_json["ordered_keys"].from(std::vector<std::string>{
+        "Name",
+        "GlobalBuffer",
+        "InputTask",
+        "OutputTask"});
+    m_json["Name"].from(name);
 }
 
 template <typename T>
@@ -78,6 +86,9 @@ template <typename T>
 void GlobalStream<T>::configBuffer(unsigned int capacity, unsigned int cordon)
 {
     m_buf = new GlobalBuffer<T>(capacity, cordon);
+    auto &jbuf = m_json["GlobalBuffer"];
+    jbuf["capacity"].from(capacity);
+    jbuf["cordon"].from(cordon);
 }
 
 template <typename T>
@@ -85,6 +96,9 @@ bool GlobalStream<T>::configInput(boost::python::api::object &functor)
 {
     boost::python::api::object task = functor();
     m_ithread.start(task);
+
+    boost::python::extract<Task&> xtask(task);
+    m_json["InputTask"] = xtask().json();
 
     return true;
 }
@@ -94,6 +108,9 @@ bool GlobalStream<T>::configOutput(boost::python::api::object &functor)
 {
     boost::python::api::object task = functor();
     m_othread.start(task);
+
+    boost::python::extract<Task&> xtask(task);
+    m_json["OutputTask"] = xtask().json();
 
     return true;
 }

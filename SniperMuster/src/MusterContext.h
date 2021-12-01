@@ -1,6 +1,5 @@
-/* Copyright (C) 2018
-   Jiaheng Zou <zoujh@ihep.ac.cn> Tao Lin <lintao@ihep.ac.cn>
-   Weidong Li <liwd@ihep.ac.cn> Xingtao Huang <huangxt@sdu.edu.cn>
+/* Copyright (C) 2018-2021
+   Institute of High Energy Physics and Shandong University
    This file is part of mt.sniper.
  
    mt.sniper is free software: you can redistribute it and/or modify
@@ -19,42 +18,54 @@
 #ifndef SNIPER_MUSTER_CONTEXT_H
 #define SNIPER_MUSTER_CONTEXT_H
 
+#include "SniperKernel/SniperJSON.h"
 #include <atomic>
 
 class MusterContext
 {
-    public:
-        
-        static MusterContext& instance() { return *s_obj; }
+public:
+    static MusterContext &instance() { return *s_obj; }
 
-        static MusterContext& create();
-        static void destroy();
+    static MusterContext &create();
+    static void destroy();
 
-        bool doNext()
-        {
-            // m_done.fetch_and_add should always be executed
-            //return m_done.fetch_and_add(1) < m_evtMax || m_infinite;
-            return m_done++ < m_evtMax || m_infinite;
-        }
+    bool doNext()
+    {
+        // m_done.fetch_and_add should always be executed
+        // return m_done.fetch_and_add(1) < m_evtMax || m_infinite;
+        return m_done++ < m_evtMax || m_infinite;
+    }
 
-        long  evtMax() { return m_evtMax; }
-        void setEvtMax(long evtMax) { m_evtMax = evtMax; m_infinite = evtMax < 0; }
-        void set_threads(int n);
+    int numWorkers() { return m_nWorkers; }
+    long evtMax() { return m_evtMax; }
+    void setNumWorkers(int n) { m_nWorkers = n; }
+    void setEvtMax(long evtMax)
+    {
+        m_evtMax = evtMax;
+        m_infinite = evtMax < 0;
+    }
 
-    private:
+    SniperJSON jsonMuster();
 
-        MusterContext();
-        ~MusterContext() = default;
+    void setJsonWorker(const SniperJSON &json) { m_worker = json; }
+    const SniperJSON &jsonWorker() { return m_worker; }
 
-        bool m_infinite;
-        long  m_evtMax;
-        std::atomic_long m_done;
+private:
+    MusterContext();
+    ~MusterContext() = default;
 
-        static MusterContext* s_obj;
+    bool m_infinite;
+    int m_nWorkers;
+    long m_evtMax;
+    std::atomic_long m_done;
 
-        // following interfaces are not supported
-        MusterContext(const MusterContext&) = delete;
-        MusterContext& operator=(const MusterContext&) = delete;
+    SniperJSON m_worker;
+
+    static MusterContext *s_obj;
+
+    // following interfaces are not supported
+    MusterContext(const MusterContext &) = delete;
+    MusterContext &operator=(const MusterContext &) = delete;
 };
 
 #endif

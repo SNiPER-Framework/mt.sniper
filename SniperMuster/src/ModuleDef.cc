@@ -1,6 +1,5 @@
-/* Copyright (C) 2018
-   Jiaheng Zou <zoujh@ihep.ac.cn> Tao Lin <lintao@ihep.ac.cn>
-   Weidong Li <liwd@ihep.ac.cn> Xingtao Huang <huangxt@sdu.edu.cn>
+/* Copyright (C) 2018-2021
+   Institute of High Energy Physics and Shandong University
    This file is part of mt.sniper.
  
    mt.sniper is free software: you can redistribute it and/or modify
@@ -18,39 +17,15 @@
 
 #include "Muster.h"
 #include "SniperMuster/GlobalStreamBase.h"
-#include "SniperKernel/Sniper.h"
 #include <boost/python.hpp>
 
 namespace bp = boost::python;
 
 namespace SniperMuster
 {
-    //用于暴露给python 产生globalStream
-    GlobalStreamBase *createGlobalStream(const std::string &name)
-    {
-        return dynamic_cast<GlobalStreamBase *>(Sniper::create(name));
-    }
-
-    // to create worker Tasks
-    DLElement *createWorker(const std::string &name)
-    {
-        static int n_threads = 0;
-
-        auto sep = name.find('/');
-        auto _type = name.substr(0, sep);
-        auto _name = (sep != std::string::npos) ? name.substr(sep+1) : name;
-
-        std::stringstream ss;
-        ss << _type << "/(" << ++n_threads << ')' << _name;
-
-        return Sniper::create(ss.str());
-    }
-
-    void show()
-    {
-        //TODO: xxx
-        std::cout << "a place holder for the SniperMuster::show()" << std::endl;
-    }
+    GlobalStreamBase *createGlobalStream(const std::string &name);
+    DLElement *createWorker(const std::string &name);
+    void show();
 }
 
 struct GlobalStreamBaseWrap : GlobalStreamBase, bp::wrapper<GlobalStreamBase>
@@ -79,6 +54,11 @@ struct GlobalStreamBaseWrap : GlobalStreamBase, bp::wrapper<GlobalStreamBase>
     {
         this->get_override("join")();
     }
+
+    SniperJSON json()
+    {
+        this->get_override("json")();
+    }
 };
 
 BOOST_PYTHON_MODULE(libSniperMuster)
@@ -99,5 +79,6 @@ BOOST_PYTHON_MODULE(libSniperMuster)
         .def("configInput", pure_virtual(&GlobalStreamBase::configInput))
         .def("configOutput", pure_virtual(&GlobalStreamBase::configOutput))
         .def("configBuffer", pure_virtual(&GlobalStreamBase::configBuffer))
-        .def("join", pure_virtual(&GlobalStreamBase::join));
+        .def("join", pure_virtual(&GlobalStreamBase::join))
+        .def("json", pure_virtual(&GlobalStreamBase::json));
 }

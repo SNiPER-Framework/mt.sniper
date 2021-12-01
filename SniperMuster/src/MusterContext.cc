@@ -1,6 +1,5 @@
-/* Copyright (C) 2018
-   Jiaheng Zou <zoujh@ihep.ac.cn> Tao Lin <lintao@ihep.ac.cn>
-   Weidong Li <liwd@ihep.ac.cn> Xingtao Huang <huangxt@sdu.edu.cn>
+/* Copyright (C) 2018-2021
+   Institute of High Energy Physics and Shandong University
    This file is part of mt.sniper.
  
    mt.sniper is free software: you can redistribute it and/or modify
@@ -39,7 +38,16 @@ void MusterContext::destroy()
 
 MusterContext::MusterContext()
     : m_infinite(false),
+      m_nWorkers(0),
       m_evtMax(5),
       m_done(0)
 {
+}
+
+SniperJSON MusterContext::jsonMuster()
+{
+    SniperJSON j;
+    j["EvtMax"].from(m_evtMax);
+    j["NumWorkers"].from(m_nWorkers);
+    return j;
 }

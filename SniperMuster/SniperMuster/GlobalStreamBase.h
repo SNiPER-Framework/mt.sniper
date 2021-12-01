@@ -36,6 +36,9 @@ public:
     virtual bool configInput(boost::python::api::object &functor) = 0;
     virtual bool configOutput(boost::python::api::object &functor) = 0;
     virtual void join() = 0;
+    virtual SniperJSON json() = 0;
+
+    static SniperJSON json_of_streams();
 
 protected:
     static std::map<std::string, GlobalStreamBase *> s_GBufMap;

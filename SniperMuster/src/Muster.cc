@@ -1,6 +1,5 @@
-/* Copyright (C) 2018
-   Jiaheng Zou <zoujh@ihep.ac.cn> Tao Lin <lintao@ihep.ac.cn>
-   Weidong Li <liwd@ihep.ac.cn> Xingtao Huang <huangxt@sdu.edu.cn>
+/* Copyright (C) 2018-2021
+   Institute of High Energy Physics and Shandong University
    This file is part of mt.sniper.
  
    mt.sniper is free software: you can redistribute it and/or modify
@@ -56,6 +55,13 @@ bool Muster::config(bp::api::object& functor, unsigned int nthreads)
     {
         append(functor);
         ++m_threads;
+    }
+
+    MusterContext::instance().setNumWorkers(m_threads);
+    if (nthreads > 0)
+    {
+        bp::extract<Task &> xobj(m_children.front());
+        MusterContext::instance().setJsonWorker(xobj().json());
     }
 
     return true;
