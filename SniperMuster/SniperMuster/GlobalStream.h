@@ -29,7 +29,7 @@ template<typename T>
 class GlobalStream : public GlobalStreamBase
 {
 public:
-    static GlobalBuffer<T> *GetBuffer(const std::string &name);
+    static GlobalBuffer<T> *GetBufferFrom(const std::string &stream);
 
     GlobalStream(const std::string &name);
     virtual ~GlobalStream();
@@ -51,15 +51,15 @@ private:
 };
 
 template <typename T>
-GlobalBuffer<T> *GlobalStream<T>::GetBuffer(const std::string &name)
+GlobalBuffer<T> *GlobalStream<T>::GetBufferFrom(const std::string &stream)
 {
-    auto it = s_GBufMap.find(name);
+    auto it = s_GBufMap.find(stream);
     if (it == s_GBufMap.end())
     {
-        throw SniperException(std::string("No GlobalStream ") + name);
+        throw SniperException(std::string("No GlobalStream ") + stream);
     }
-    auto stream = dynamic_cast<GlobalStream<T>*>(it->second);
-    return stream->buffer();
+    auto pstream = dynamic_cast<GlobalStream<T>*>(it->second);
+    return pstream->buffer();
 }
 
 template <typename T>
@@ -99,6 +99,7 @@ bool GlobalStream<T>::configInput(boost::python::api::object &functor)
 
     boost::python::extract<Task&> xtask(task);
     m_json["InputTask"] = xtask().json();
+    m_json["InputTask"].erase("sniper");
 
     return true;
 }
@@ -111,6 +112,7 @@ bool GlobalStream<T>::configOutput(boost::python::api::object &functor)
 
     boost::python::extract<Task&> xtask(task);
     m_json["OutputTask"] = xtask().json();
+    m_json["OutputTask"].erase("sniper");
 
     return true;
 }

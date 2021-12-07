@@ -56,7 +56,7 @@ WriteGBufAlg::~WriteGBufAlg()
 
 bool WriteGBufAlg::initialize()
 {
-    m_gbuf = GlobalStream<DummyEvent>::GetBuffer("GEvtStream");
+    m_gbuf = GlobalStream<DummyEvent>::GetBufferFrom("GEvtStream");
 
     if ( ! m_fname.empty() ) {
         m_ofs.open(m_fname, std::ios::trunc);
