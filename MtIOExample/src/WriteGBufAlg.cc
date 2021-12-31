@@ -17,10 +17,10 @@
    along with mt.sniper.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "DummyEvent.h"
+#include "RootWriter/MtTTree.h"
 #include "SniperKernel/AlgBase.h"
 #include "SniperKernel/AlgFactory.h"
-#include "SniperKernel/SniperLog.h"
-#include "SniperMuster/GlobalStream.h"
+#include "SniperMuster/GlobalStream4Any.h"
 #include <fstream>
 
 class WriteGBufAlg : public AlgBase
@@ -36,7 +36,7 @@ class WriteGBufAlg : public AlgBase
 
     private :
 
-        GlobalBuffer<DummyEvent>* m_gbuf;
+        GlobalBuffer4Any* m_gbuf;
 
         std::string   m_fname;
         std::ofstream m_ofs;
@@ -56,7 +56,7 @@ WriteGBufAlg::~WriteGBufAlg()
 
 bool WriteGBufAlg::initialize()
 {
-    m_gbuf = GlobalStream<DummyEvent>::GetBufferFrom("GEvtStream");
+    m_gbuf = GlobalStream4Any::GetBufferFrom("GlobalStream");
 
     if ( ! m_fname.empty() ) {
         m_ofs.open(m_fname, std::ios::trunc);
@@ -67,11 +67,19 @@ bool WriteGBufAlg::initialize()
 
 bool WriteGBufAlg::execute()
 {
-    auto evt = m_gbuf->pop_front();
+    auto data = m_gbuf->pop_front();
 
-    if ( evt != nullptr ) {
+    if ( data != nullptr ) {
+        // write the event data
+        auto &evt = my::any_cast<std::shared_ptr<DummyEvent> &>(data->at("event"));
         if ( ! m_fname.empty() ) {
             m_ofs << evt->getGid() << '\t' << evt->getLid() << '\t' << evt->getNum() << std::endl;
+        }
+        // write the ROOT TTree data
+        auto &trees = my::any_cast<std::vector<MtTTree *> &>(data->at("trees"));
+        for (auto tree : trees)
+        {
+            tree->DoFillOne();
         }
     }
     else {
@@ -85,4 +93,3 @@ bool WriteGBufAlg::finalize()
 {
     return true;
 }
-

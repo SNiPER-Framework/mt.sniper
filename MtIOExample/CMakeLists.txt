@@ -1,8 +1,8 @@
 # build
 file(GLOB sources CONFIGURE_DEPENDS src/*.cc)
 add_library(MtIOExample SHARED ${sources})
-target_include_directories(MtIOExample PUBLIC ${CMAKE_CURRENT_LIST_DIR})
-target_link_libraries(MtIOExample PRIVATE SniperMuster)
+target_include_directories(MtIOExample PUBLIC ${CMAKE_CURRENT_LIST_DIR} ${ROOT_INCLUDE_DIRS})
+target_link_libraries(MtIOExample PRIVATE SniperMuster SNiPER::RootWriterLib)
 
 # install
 install(TARGETS MtIOExample DESTINATION ${CMAKE_INSTALL_LIBDIR})

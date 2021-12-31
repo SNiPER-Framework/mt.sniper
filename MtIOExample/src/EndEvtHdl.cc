@@ -47,7 +47,7 @@ EndEvtHdl::EndEvtHdl(ExecUnit* par)
 
 bool EndEvtHdl::handle(Incident& /*incident*/)
 {
-    m_oSvc->setDone( m_store->ref() );
+    m_oSvc->process( m_store->ref() );
 
     return true;
 }

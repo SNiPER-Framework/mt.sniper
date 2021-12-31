@@ -20,8 +20,10 @@
 #define DUMMY_OUTPUT_SVC_H
 
 #include "DummyEvent.h"
-#include "SniperMuster/GlobalBuffer.h"
+#include "SniperMuster/GlobalStream4Any.h"
 #include "SniperKernel/SvcBase.h"
+
+class MtTTreeStore;
 
 class DummyOutputSvc : public SvcBase
 {
@@ -33,11 +35,11 @@ class DummyOutputSvc : public SvcBase
         bool initialize();
         bool finalize();
 
-        void setDone(GlobalBuffer<DummyEvent>::Elem* ref);
+        void process(GlobalBuffer4Any::Elem* ref);
 
     private :
-
-        GlobalBuffer<DummyEvent>* m_gbuf;
+        MtTTreeStore* m_treeStore;
+        GlobalBuffer4Any* m_gbuf;
 };
 
 #endif

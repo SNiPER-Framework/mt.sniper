@@ -19,9 +19,12 @@
 #include "DummyIOAlg.h"
 #include "DummyStore.h"
 #include "DummyEvent.h"
+#include "RootWriter/RootWriter.h"
+#include "SniperKernel/SniperPtr.h"
 #include "SniperKernel/SniperDataPtr.h"
 #include "SniperKernel/AlgFactory.h"
 #include "SniperKernel/SniperLog.h"
+#include "TTree.h"
 
 DECLARE_ALGORITHM(DummyIOAlg);
 
@@ -38,7 +41,27 @@ DummyIOAlg::~DummyIOAlg()
 
 bool DummyIOAlg::initialize()
 {
-    LogInfo << " initialized successfully" << std::endl;
+    SniperPtr<RootWriter> rw(this->getParent(), "RootWriter");
+    if (!rw.valid())
+    {
+        LogError << "Failed to get RootWriter instance!" << std::endl;
+        return false;
+    }
+
+    m_tree1 = rw->bookTree(*m_par, "FILE2/dummy1", "Dummy Test");
+    m_tree1->Branch("Gid",  &m_gid,  "Gid/I");
+    m_tree1->Branch("Lid",  &m_lid,  "Lid/I");
+    m_tree1->Branch("iLeaf", &m_iLeaf, "iLeaf/I");
+
+    m_tree2 = rw->bookTree(*m_par, "FILE1/dummy2", "Dummy Test");
+    m_tree2->Branch("Gid",  &m_gid,  "Gid/I");
+    m_tree2->Branch("Lid",  &m_lid,  "Lid/I");
+    m_tree2->Branch("fLeaf", &m_fLeaf, "fLeaf/F");
+
+    m_tree3 = rw->bookTree(*m_par, "FILE2/dummy3", "Dummy Test");
+    m_tree3->Branch("Gid",  &m_gid,  "Gid/I");
+    m_tree3->Branch("Lid",  &m_lid,  "Lid/I");
+    m_tree3->Branch("dLeaf", &m_dLeaf, "dLeaf/D");
 
     SniperDataPtr<DummyStore> pStore(m_par, "/Event");
     if (pStore.invalid())
@@ -47,6 +70,8 @@ bool DummyIOAlg::initialize()
         return false;
     }
     m_store = pStore.data();
+
+    LogInfo << " initialized successfully" << std::endl;
 
     return true;
 }
@@ -61,6 +86,16 @@ bool DummyIOAlg::execute()
     evt->setLid(m_count);
 
     LogInfo << '\t' << evt->getGid() << '\t' << evt->getLid() << '\t' << evt->getNum() << std::endl;
+
+    m_gid = evt->getGid();
+    m_lid = evt->getLid();
+    m_iLeaf = m_gid*2;
+    m_fLeaf = m_gid*0.31;
+    m_dLeaf = m_gid*0.71;
+
+    m_tree1->Fill();
+    m_tree2->Fill();
+    m_tree3->Fill();
 
     return true;
 }

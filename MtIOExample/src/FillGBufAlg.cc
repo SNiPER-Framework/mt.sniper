@@ -20,7 +20,7 @@
 #include "SniperKernel/AlgBase.h"
 #include "SniperKernel/AlgFactory.h"
 #include "SniperKernel/SniperLog.h"
-#include "SniperMuster/GlobalStream.h"
+#include "SniperMuster/GlobalStream4Any.h"
 
 class FillGBufAlg : public AlgBase
 {
@@ -36,7 +36,7 @@ class FillGBufAlg : public AlgBase
     private :
 
         int           m_max;
-        GlobalBuffer<DummyEvent>* m_gbuf;
+        GlobalBuffer4Any* m_gbuf;
 };
 
 DECLARE_ALGORITHM(FillGBufAlg);
@@ -53,7 +53,7 @@ FillGBufAlg::~FillGBufAlg()
 
 bool FillGBufAlg::initialize()
 {
-    m_gbuf = GlobalStream<DummyEvent>::GetBufferFrom("GEvtStream");
+    m_gbuf = GlobalStream4Any::GetBufferFrom("GlobalStream");
     return true;
 }
 
@@ -67,7 +67,11 @@ bool FillGBufAlg::execute()
         return true;
     }
 
-    m_gbuf->push_back(std::shared_ptr<DummyEvent>(new DummyEvent(++gid)));
+    auto v = new GlobalBuffer4Any::value_type;
+    auto evt = new DummyEvent(++gid);
+    v->insert(std::make_pair("event", std::shared_ptr<DummyEvent>(evt)));
+
+    m_gbuf->push_back(std::shared_ptr<GlobalBuffer4Any::value_type>(v));
 
     return true;
 }

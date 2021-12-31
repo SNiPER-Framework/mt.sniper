@@ -3,12 +3,18 @@ message(STATUS "cmake version ${CMAKE_VERSION}")
 
 project(MtSNiPER VERSION 1.0 LANGUAGES CXX)
 
-find_package(SNiPER 2.0 REQUIRED)
+find_package(SNiPER 2.1 REQUIRED)
 
-## In case of using the buildin TBB
-#include($ENV{TBB_ROOT}/cmake/TBBBuild.cmake)
-#tbb_build(TBB_ROOT $ENV{TBB_ROOT} CONFIG_DIR TBB_DIR MAKE_ARGS tbb_cpf=0)
-find_package(TBB 2020.0 REQUIRED)
+option(BUILDIN_TBB "whether to use the buildin TBB" OFF)
+if(BUILDIN_TBB)
+    include($ENV{TBB_ROOT}/cmake/TBBBuild.cmake)
+    tbb_build(TBB_ROOT $ENV{TBB_ROOT} CONFIG_DIR TBB_DIR MAKE_ARGS tbb_cpf=0)
+else()
+    find_package(TBB 2020.0 REQUIRED)
+endif()
+
+find_package(ROOT 5.18 REQUIRED)
+message(STATUS "ROOT version ${ROOT_VERSION}")
 
 # Global Settings
 include(CMakePrintHelpers)

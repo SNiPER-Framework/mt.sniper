@@ -17,7 +17,8 @@
    along with mt.sniper.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "DummyOutputSvc.h"
-#include "SniperMuster/GlobalStream.h"
+#include "RootWriter/MtTTreeStore.h"
+#include "SniperKernel/SniperDataPtr.h"
 #include "SniperKernel/SvcFactory.h"
 
 DECLARE_SERVICE(DummyOutputSvc);
@@ -33,7 +34,11 @@ DummyOutputSvc::~DummyOutputSvc()
 
 bool DummyOutputSvc::initialize()
 {
-    m_gbuf = GlobalStream<DummyEvent>::GetBufferFrom("GEvtStream");
+    SniperDataPtr<MtTTreeStore> tStore(m_par, "MtTTreeStore");
+    m_treeStore = tStore.data();
+
+    m_gbuf = GlobalStream4Any::GetBufferFrom("GlobalStream");
+
     return true;
 }
 
@@ -42,7 +47,12 @@ bool DummyOutputSvc::finalize()
     return true;
 }
 
-void DummyOutputSvc::setDone(GlobalBuffer<DummyEvent>::Elem* ref)
+void DummyOutputSvc::process(GlobalBuffer4Any::Elem* ref)
 {
+    //put the ROOT TTree data to the associated GlobalBuffer::Elem
+    auto & trees = m_treeStore->trees();
+    ref->dptr->insert(std::make_pair("trees", my::any(std::vector<MtTTree *>())));
+    trees.swap(my::any_cast<std::vector<MtTTree *> &>(ref->dptr->at("trees")));
+
     return m_gbuf->setDone(ref);
 }

@@ -49,7 +49,7 @@ bool BeginEvtHdl::handle(Incident& /*incident*/)
 {
     auto ref = m_iSvc->next();
     if ( ref != nullptr ) {
-        m_store->adopt(ref->dptr);
+        m_store->adopt(my::any_cast<std::shared_ptr<DummyEvent>&>(ref->dptr->at("event")));
         m_store->setRef(ref);
         return true;
     }

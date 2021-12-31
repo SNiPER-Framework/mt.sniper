@@ -38,10 +38,3 @@ DummyEvent::~DummyEvent()
 {
     --m_num;
 }
-
-/// the declaration of dynamic stream creation
-#include "SniperMuster/GlobalStream.h"
-#include "SniperKernel/DeclareDLE.h"
-
-typedef GlobalStream<DummyEvent> DummyEventStream;
-SNIPER_DECLARE_DLE(DummyEventStream);

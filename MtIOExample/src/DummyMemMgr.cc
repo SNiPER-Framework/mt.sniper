@@ -20,6 +20,7 @@
 #include "DummyStore.h"
 #include "BeginEvtHdl.h"
 #include "EndEvtHdl.h"
+#include "RootWriter/MtTTreeStore.h"
 #include "SniperKernel/Task.h"
 #include "SniperKernel/DataMemSvc.h"
 #include "SniperKernel/SniperPtr.h"
@@ -40,6 +41,7 @@ bool DummyMemMgr::initialize()
 {
     SniperPtr<DataMemSvc> pSvc(m_par, "DataMemSvc");
     pSvc->regist("/Event", new DummyStore());
+    pSvc->regist("MtTTreeStore", new MtTTreeStore());
 
     if ( m_par->find("InputSvc") != 0 ) {
         IIncidentHandler* bi = new BeginEvtHdl(m_par);

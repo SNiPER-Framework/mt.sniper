@@ -27,6 +27,8 @@ template <typename T>
 class GlobalBuffer
 {
 public:
+    typedef T value_type;
+
     struct Elem
     {
         std::shared_ptr<T> dptr;

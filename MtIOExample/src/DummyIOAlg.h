@@ -22,6 +22,7 @@
 #include "SniperKernel/AlgBase.h"
 
 class DummyStore;
+class TTree;
 
 class DummyIOAlg: public AlgBase
 {
@@ -38,6 +39,16 @@ class DummyIOAlg: public AlgBase
 
         int m_count;
         DummyStore* m_store;
+
+        int m_gid;
+        int m_lid;
+        int m_iLeaf;
+        float m_fLeaf;
+        double m_dLeaf;
+
+        TTree* m_tree1;
+        TTree* m_tree2;
+        TTree* m_tree3;
 };
 
 #endif

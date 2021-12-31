@@ -21,7 +21,7 @@
 
 #include "DummyEvent.h"
 #include "SniperKernel/IDataBlock.h"
-#include "SniperMuster/GlobalBuffer.h"
+#include "SniperMuster/GlobalStream4Any.h"
 #include <memory>
 
 class DummyStore : public IDataBlock
@@ -34,12 +34,12 @@ public:
     std::shared_ptr<DummyEvent> &event() { return m_evt; }
 
     // for the convenience of testing
-    void setRef(GlobalBuffer<DummyEvent>::Elem *ref) { m_ref = ref; }
-    GlobalBuffer<DummyEvent>::Elem *ref() { return m_ref; }
+    void setRef(GlobalBuffer4Any::Elem *ref) { m_ref = ref; }
+    GlobalBuffer4Any::Elem *ref() { return m_ref; }
 
 private:
     std::shared_ptr<DummyEvent> m_evt;
-    GlobalBuffer<DummyEvent>::Elem *m_ref;
+    GlobalBuffer4Any::Elem *m_ref;
 };
 
 #endif

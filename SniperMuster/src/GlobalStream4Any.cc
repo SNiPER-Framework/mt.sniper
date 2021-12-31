@@ -1,6 +1,5 @@
-/* Copyright (C) 2018
-   Jiaheng Zou <zoujh@ihep.ac.cn> Tao Lin <lintao@ihep.ac.cn>
-   Weidong Li <liwd@ihep.ac.cn> Xingtao Huang <huangxt@sdu.edu.cn>
+/* Copyright (C) 2021
+   Institute of High Energy Physics and Shandong University
    This file is part of mt.sniper.
  
    mt.sniper is free software: you can redistribute it and/or modify
@@ -16,28 +15,7 @@
    You should have received a copy of the GNU Lesser General Public License
    along with mt.sniper.  If not, see <http://www.gnu.org/licenses/>. */
 
-#ifndef DUMMY_INPUT_SVC_H
-#define DUMMY_INPUT_SVC_H
-
-#include "DummyEvent.h"
 #include "SniperMuster/GlobalStream4Any.h"
-#include "SniperKernel/SvcBase.h"
+#include "SniperKernel/DeclareDLE.h"
 
-class DummyInputSvc : public SvcBase
-{
-    public :
-
-        DummyInputSvc(const std::string& name);
-        virtual ~DummyInputSvc();
-
-        bool initialize();
-        bool finalize();
-
-        GlobalBuffer4Any::Elem* next();
-
-    private :
-
-        GlobalBuffer4Any* m_gbuf;
-};
-
-#endif
+SNIPER_DECLARE_DLE(GlobalStream4Any);
