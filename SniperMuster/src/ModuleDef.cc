@@ -57,7 +57,7 @@ struct GlobalStreamBaseWrap : GlobalStreamBase, bp::wrapper<GlobalStreamBase>
 
     SniperJSON json()
     {
-        this->get_override("json")();
+        return this->get_override("json")();
     }
 };
 
