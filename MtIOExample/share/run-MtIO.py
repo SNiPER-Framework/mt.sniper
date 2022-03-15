@@ -35,24 +35,18 @@ def GOutput():
 if __name__ == "__main__":
 
     import Sniper
+    import SniperMuster
+    import RootWriter
+    import SniperRootUsages
+    import MtIOExample
+
     Sniper.setLogLevel(3)
     #Sniper.setShowTime()
     #Sniper.setLogFile("log.txt", False)
 
-    import RootWriter
     global root_writer
     root_writer = Sniper.create("MtRootWriter/RootWriter")
     root_writer.property("Output").set({"FILE1": "output1.root", "FILE2": "output2.root"})
-
-    import SniperMuster
-    muster = SniperMuster.Muster()
-    # the EvtMax in Sniper.Task is deactivated by Muster
-    muster.setEvtMax(100000)
-
-    # we will execute the HelloJob maximumly in 4 threads
-    import MtIOExample
-    import SniperRootUsages
-    muster.config(HelloJob, 4)
 
     # I/O and global buffer
     gs = SniperMuster.createGlobalStream("GlobalStream4Any/GlobalStream")
@@ -60,9 +54,17 @@ if __name__ == "__main__":
     gs.configInput(GInput)
     gs.configOutput(GOutput)
 
+    # setup the Muster
+    muster = SniperMuster.Muster()
+    # the EvtMax in Sniper.Task is deactivated by Muster
+    muster.setEvtMax(100000)
+
+    # we will execute the HelloJob maximumly in 4 threads with the global stream
+    muster.setIO(gs)
+    muster.config(HelloJob, 4)
+
     # show the configurations
     SniperMuster.show()
 
     # spawn the threads and begin to run 
     muster.run()
-    gs.join()

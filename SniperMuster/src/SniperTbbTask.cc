@@ -30,7 +30,6 @@ SniperTbbTask::SniperTbbTask(TaskWatchDog& snoopy)
 
 SniperTbbTask::~SniperTbbTask()
 {
-    m_snoopy.finalize();
 }
 
 tbb::task* SniperTbbTask::execute()
