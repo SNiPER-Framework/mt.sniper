@@ -71,6 +71,7 @@ BOOST_PYTHON_MODULE(libSniperMuster)
 
     class_<Muster, boost::noncopyable>("Muster")
         .def("setEvtMax", &Muster::setEvtMax)
+        .def("setIO", &Muster::setIO)
         .def("config", &Muster::config)
         .def("append", &Muster::append)
         .def("run", &Muster::run);

@@ -23,39 +23,42 @@
 namespace boost { namespace python { namespace api { class object; } } }
 class Task;
 class TaskSupervisor;
+class GlobalStreamBase;
 
 class Muster
 {
-    public:
+public:
+    Muster();
+    virtual ~Muster();
 
-        Muster();
-        virtual ~Muster();
+    // set the maximun events number to run
+    void setEvtMax(int evtMax);
 
-        // set the maximun events number to run
-        void setEvtMax(int evtMax);
+    // set the global stream for this Muster
+    bool setIO(GlobalStreamBase *gs) { m_gs = gs; }
 
-        // will execute the corresponding task maximumly in nthreads
-        bool config(boost::python::api::object& functor, unsigned int nthreads);
+    // will execute the corresponding task maximumly in nthreads
+    bool config(boost::python::api::object &functor, unsigned int nthreads);
 
-        // append a task without additional thread
-        bool append(boost::python::api::object& functor);
+    // append a task without additional thread
+    bool append(boost::python::api::object &functor);
 
-        // spawn n threads for parallel execution
-        bool run();
+    // spawn n threads for parallel execution
+    bool run();
 
-        const char* objName() { return "Muster"; }
- 
-    private:
+    const char *objName() { return "Muster"; }
 
-        int             m_threads;
-        TaskSupervisor* m_supervisor;
+private:
+    int m_threads;
+    TaskSupervisor *m_supervisor;
+    GlobalStreamBase *m_gs;
 
-        // hold the Python instances until terminating
-        std::list<boost::python::api::object> m_children;
+    // hold the Python instances until terminating
+    std::list<boost::python::api::object> m_children;
 
-        // following interfaces are not supported
-        Muster(const Muster&) = delete;
-        Muster& operator=(const Muster&) = delete;
+    // following interfaces are not supported
+    Muster(const Muster &) = delete;
+    Muster &operator=(const Muster &) = delete;
 };
 
 #endif

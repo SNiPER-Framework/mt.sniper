@@ -19,6 +19,7 @@
 #include "TaskSupervisor.h"
 #include "MusterContext.h"
 #include "SyncAssistor.h"
+#include "SniperMuster/GlobalStreamBase.h"
 #include "SniperKernel/Task.h"
 #include "SniperKernel/SniperContext.h"
 #include "SniperKernel/SniperException.h"
@@ -30,7 +31,8 @@
 namespace bp = boost::python;
 
 Muster::Muster()
-    : m_threads(0)
+    : m_threads(0),
+      m_gs(nullptr)
 {
     MusterContext::create();
     sniper_context->set(Sniper::SysMode::MT);
@@ -95,6 +97,18 @@ bool Muster::run()
 
     LogInfo << "totally open " << m_threads << " tbb threads" << std::endl;
     tbb::task::spawn_root_and_wait(*m_supervisor);
+
+    // waiting for the stop of global stream
+    if (m_gs != nullptr)
+    {
+        m_gs->join();
+    }
+
+    // finalize the children (worker) tasks
+    for (auto &child : m_children)
+    {
+        child.attr("Snoopy")().attr("finalize")();
+    }
 
     LogInfo << "Muster.run() is finished" << std::endl;
 
