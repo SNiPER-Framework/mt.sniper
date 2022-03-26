@@ -1,22 +1,24 @@
 /* Copyright (C) 2018-2021
    Institute of High Energy Physics and Shandong University
    This file is part of mt.sniper.
- 
+
    mt.sniper is free software: you can redistribute it and/or modify
    it under the terms of the GNU Lesser General Public License as published by
    the Free Software Foundation, either version 3 of the License, or
    (at your option) any later version.
- 
+
    mt.sniper is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU Lesser General Public License for more details.
- 
+
    You should have received a copy of the GNU Lesser General Public License
    along with mt.sniper.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "Muster.h"
+#include "SniperKernel/AlgBase.h"
 #include "SniperMuster/GlobalStreamBase.h"
+#include "SniperMuster/MtDagTask.h"
 #include <boost/python.hpp>
 
 namespace bp = boost::python;
@@ -72,6 +74,7 @@ BOOST_PYTHON_MODULE(libSniperMuster)
     class_<Muster, boost::noncopyable>("Muster")
         .def("setEvtMax", &Muster::setEvtMax)
         .def("setIO", &Muster::setIO)
+        .def("setThreads", &Muster::setThreads)
         .def("config", &Muster::config)
         .def("append", &Muster::append)
         .def("run", &Muster::run);
@@ -82,4 +85,11 @@ BOOST_PYTHON_MODULE(libSniperMuster)
         .def("configBuffer", pure_virtual(&GlobalStreamBase::configBuffer))
         .def("join", pure_virtual(&GlobalStreamBase::join))
         .def("json", pure_virtual(&GlobalStreamBase::json));
+
+    class_<MtDagTask, bases<TopTask>, boost::noncopyable>
+        ("MtDagTask", init<const std::string&>())
+        .def("insertNode", &MtDagTask::insertNode,
+                return_value_policy<reference_existing_object>())
+        .def("makeEdge", &MtDagTask::makeEdge)
+        .def("done", &MtDagTask::done);
 }
