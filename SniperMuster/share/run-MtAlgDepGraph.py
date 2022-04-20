@@ -15,7 +15,7 @@ def BuildGraph():
     #   E -- F -- G
     # One correct sequence: A-B-E-C-D-F-G-H-I
 
-    import DepGraphUsages
+    import SniperCoreUsages
 
     algI = g.insertNode("GraphTestAlg/algI")
     algH = g.insertNode("GraphTestAlg/algH")
@@ -60,7 +60,7 @@ if __name__ == "__main__":
     import SniperMuster
     muster = SniperMuster.Muster()
 
-    muster.setEvtMax(1000)
+    muster.setEvtMax(5000)
     # set max number of threads
     muster.setThreads(8)
 

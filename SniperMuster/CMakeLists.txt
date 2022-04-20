@@ -10,7 +10,7 @@ target_link_libraries(SniperMuster PUBLIC SNiPER::SniperKernel TBB::tbb ${PYTHON
 #install
 install(TARGETS SniperMuster
     EXPORT ${PROJECT_NAME}Targets
-    DESTINATION ${CMAKE_INSTALL_PYTHONDIR})
+    DESTINATION ${CMAKE_INSTALL_PYTHONDIR}/SniperMuster)
 install(DIRECTORY SniperMuster DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install(DIRECTORY python/SniperMuster DESTINATION ${CMAKE_INSTALL_PYTHONDIR})
 install(FILES share/run-MusterTest.py
