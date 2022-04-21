@@ -86,7 +86,7 @@ BOOST_PYTHON_MODULE(libSniperMuster)
         .def("join", pure_virtual(&GlobalStreamBase::join))
         .def("json", pure_virtual(&GlobalStreamBase::json));
 
-    class_<MtDagTask, bases<TopTask>, boost::noncopyable>
+    class_<MtDagTask, bases<DagBase>, boost::noncopyable>
         ("MtDagTask", init<const std::string&>())
         .def("insertNode", &MtDagTask::insertNode,
                 return_value_policy<reference_existing_object>())

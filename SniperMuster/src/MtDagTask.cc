@@ -30,7 +30,7 @@ SNIPER_DECLARE_DLE(MtDagTask);
 typedef const tbb::flow::continue_msg& msg_t;
 
 MtDagTask::MtDagTask(const std::string& name)
-        : TopTask(name) {
+        : DagBase(name) {
     m_tag = "MtDagTask";
     m_graph = new tbb::flow::graph();
 }

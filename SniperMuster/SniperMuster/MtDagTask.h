@@ -24,12 +24,12 @@
 #include <unordered_map>
 #include <vector>
 
-#include "SniperKernel/TopTask.h"
+#include "SniperKernel/DagBase.h"
 
 class AlgBase;
 class SniperJSON;
 
-class MtDagTask : public TopTask {
+class MtDagTask : public DagBase {
 
 public:
     MtDagTask(const std::string& name);

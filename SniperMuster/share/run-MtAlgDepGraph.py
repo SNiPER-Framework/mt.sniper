@@ -13,7 +13,7 @@ def BuildGraph():
     # A   D ----    /
     #  \         \ /
     #   E -- F -- G
-    # One correct sequence: A-B-E-C-D-F-G-H-I
+    # One possible correct sequence: A-B-E-C-D-F-G-H-I
 
     import SniperCoreUsages
 
