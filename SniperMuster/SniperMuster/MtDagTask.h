@@ -47,9 +47,6 @@ public:
     //virtual void eval(const SniperJSON &json) override;
 
 protected:
-    virtual bool config() override;
-    virtual bool initialize() override;
-    virtual bool finalize() override;
     virtual bool execute() override;
 
 

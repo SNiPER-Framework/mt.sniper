@@ -141,27 +141,6 @@ void MtDagTask::eval(const SniperJSON& json) {
 }
 */
 
-bool MtDagTask::config() {
-    bool stat = TopTask::config();
-    if (!stat)
-        m_snoopy.setErr();
-    return stat;
-}
-
-bool MtDagTask::initialize() {
-    bool stat = TopTask::initialize();
-    if (!stat)
-        m_snoopy.setErr();
-    return stat;
-}
-
-bool MtDagTask::finalize() {
-    bool stat = TopTask::finalize();
-    if (!stat)
-        m_snoopy.setErr();
-    return stat;
-}
-
 bool MtDagTask::execute() {
 
     if (m_limited && m_done >= m_evtMax) {
