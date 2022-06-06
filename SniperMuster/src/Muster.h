@@ -1,17 +1,17 @@
 /* Copyright (C) 2018-2021
    Institute of High Energy Physics and Shandong University
    This file is part of mt.sniper.
- 
+
    mt.sniper is free software: you can redistribute it and/or modify
    it under the terms of the GNU Lesser General Public License as published by
    the Free Software Foundation, either version 3 of the License, or
    (at your option) any later version.
- 
+
    mt.sniper is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU Lesser General Public License for more details.
- 
+
    You should have received a copy of the GNU Lesser General Public License
    along with mt.sniper.  If not, see <http://www.gnu.org/licenses/>. */
 
@@ -35,9 +35,12 @@ public:
     void setEvtMax(int evtMax);
 
     // set the global stream for this Muster
-    bool setIO(GlobalStreamBase *gs) { m_gs = gs; }
+    void setIO(GlobalStreamBase *gs) { m_gs = gs; }
 
-    // will execute the corresponding task maximumly in nthreads
+    // set the number of threads
+    void setThreads(unsigned int nthreads) { m_threads = nthreads; }
+
+    // will execute the corresponding task maximumly in workers
     bool config(boost::python::api::object &functor, unsigned int nthreads);
 
     // append a task without additional thread

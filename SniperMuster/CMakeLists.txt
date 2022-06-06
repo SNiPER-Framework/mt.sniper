@@ -8,7 +8,11 @@ target_include_directories(SniperMuster PUBLIC
 target_link_libraries(SniperMuster PUBLIC SNiPER::SniperKernel TBB::tbb ${PYTHON_LIBRARY} ${BOOST_PYTHON_LIBRARY})
 
 #install
+install(TARGETS SniperMuster
+    EXPORT ${PROJECT_NAME}Targets
+    DESTINATION ${CMAKE_INSTALL_PYTHONDIR}/SniperMuster)
 install(DIRECTORY SniperMuster DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-install(TARGETS SniperMuster DESTINATION ${CMAKE_INSTALL_PYTHONDIR}/SniperMuster)
 install(DIRECTORY python/SniperMuster DESTINATION ${CMAKE_INSTALL_PYTHONDIR})
-install(FILES share/run-MusterTest.py DESTINATION ${CMAKE_INSTALL_DATADIR})
+install(FILES share/run-MusterTest.py
+              share/run-MtAlgDepGraph.py
+        DESTINATION ${CMAKE_INSTALL_DATADIR})

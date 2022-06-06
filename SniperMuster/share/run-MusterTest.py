@@ -34,11 +34,12 @@ if __name__ == "__main__":
     # the EvtMax in Sniper.Task is deactivated by Muster
     muster.setEvtMax(20000)
 
-    # we will execute the HelloJob maximumly in 4 threads
+    # we will execute the HelloJob maximumly in 4 workers
+    # and every worker execute in 1 thread by default
     muster.config(HelloJob, 4)
 
     # show the configurations
     SniperMuster.show()
 
-    # spawn the threads and begin to run 
+    # spawn the threads and begin to run
     muster.run()

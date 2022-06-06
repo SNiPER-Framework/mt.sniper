@@ -51,19 +51,23 @@ void Muster::setEvtMax(int evtMax)
     MusterContext::instance().setEvtMax(evtMax);
 }
 
-bool Muster::config(bp::api::object& functor, unsigned int nthreads)
+bool Muster::config(bp::api::object& functor, unsigned int nworkers)
 {
-    for ( unsigned int i = 0; i < nthreads; ++i )
+    for ( unsigned int i = 0; i < nworkers; ++i )
     {
         append(functor);
-        ++m_threads;
     }
 
-    MusterContext::instance().setNumWorkers(m_threads);
-    if (nthreads > 0)
+    MusterContext::instance().setNumWorkers(nworkers);
+    if (nworkers > 0)
     {
         bp::extract<Task &> xobj(m_children.front());
         MusterContext::instance().setJsonWorker(xobj().json());
+    }
+
+    if (m_threads == 0)
+    {
+        m_threads = nworkers;
     }
 
     return true;
