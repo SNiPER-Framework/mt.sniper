@@ -5,6 +5,7 @@
 #include <memory>
 
 typedef SniperJSON JsonEvent;
+typedef std::map<std::string, std::any> MappedEvent;
 
 class IFillGlobalBufSvc
 {
@@ -16,9 +17,9 @@ public:
 class IGetGlobalBufSvc
 {
 public:
-    virtual std::shared_ptr<JsonEvent> &get() = 0;
+    virtual MappedEvent &get() = 0;
+    virtual MappedEvent &pop() = 0;
     virtual void done() = 0;
-    virtual std::shared_ptr<JsonEvent> &pop() = 0;
 };
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -71,9 +72,9 @@ class OldStyleGetGlobalBufSvc : public SvcBase, public IGetGlobalBufSvc
         virtual bool initialize() override;
         virtual bool finalize() override { return true; }
 
-        virtual std::shared_ptr<JsonEvent> &get() override;
+        virtual MappedEvent &get() override;
+        virtual MappedEvent &pop() override;
         virtual void done() override;
-        virtual std::shared_ptr<JsonEvent> &pop() override;
     private:
         GlobalBuffer4Any* m_gbuf;
         GlobalBuffer4Any::Elem* m_slot;
@@ -91,22 +92,17 @@ bool OldStyleGetGlobalBufSvc::initialize()
     return true;
 }
 
-std::shared_ptr<JsonEvent> &OldStyleGetGlobalBufSvc::get()
+MappedEvent &OldStyleGetGlobalBufSvc::get()
 {
     m_slot = m_gbuf->next();
     if (m_slot == nullptr)
     {
         m_par->stop();
     }
-    return my::any_cast<std::shared_ptr<JsonEvent> &>(m_slot->dptr->at("event"));
+    return *(m_slot->dptr);
 }
 
-void OldStyleGetGlobalBufSvc::done()
-{
-    m_gbuf->setDone(m_slot);
-}
-
-std::shared_ptr<JsonEvent> &OldStyleGetGlobalBufSvc::pop()
+MappedEvent &OldStyleGetGlobalBufSvc::pop()
 {
     static std::shared_ptr<GlobalBuffer4Any::value_type> data;
     data = m_gbuf->pop_front();
@@ -114,5 +110,10 @@ std::shared_ptr<JsonEvent> &OldStyleGetGlobalBufSvc::pop()
     {
         m_par->stop();
     }
-    return my::any_cast<std::shared_ptr<JsonEvent> &>(data->at("event"));
+    return *data;
+}
+
+void OldStyleGetGlobalBufSvc::done()
+{
+    m_gbuf->setDone(m_slot);
 }
