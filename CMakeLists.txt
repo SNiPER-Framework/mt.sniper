@@ -3,7 +3,7 @@ message(STATUS "cmake version ${CMAKE_VERSION}")
 
 project(MtSNiPER VERSION 1.0 LANGUAGES CXX)
 
-find_package(SNiPER 2.1 REQUIRED)
+find_package(SNiPER 3.0 REQUIRED)
 
 option(BUILDIN_TBB "whether to use the buildin TBB" OFF)
 if(BUILDIN_TBB)
@@ -34,7 +34,7 @@ if(WIN32)
 endif()
 
 # Compiler and Linker Settings
-set(CMAKE_CXX_STANDARD 11 CACHE STRING "")
+set(CMAKE_CXX_STANDARD 17 CACHE STRING "")
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -pthread")
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
