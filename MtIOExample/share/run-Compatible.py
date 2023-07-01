@@ -3,13 +3,14 @@
 def HelloJob():
     task = SniperMuster.createWorker("Task/Job")
 
-    #global root_writer
-    #task.addSvc(root_writer)
-
     task.createSvc("OldStyleGetGlobalBufSvc/GetGlobalBufSvc")
     task.createSvc("SniperProfiling")
     alg = task.createAlg("TimeConsumeAlg")
     alg.createTool("TimeConsumeTool")
+
+    if useRootWriter:
+        task.addSvc(root_writer)
+        alg.createTool("FillRootTool/FillResultTool")
 
     # instead of task.run(), we must return the task object here
     return task
@@ -27,7 +28,11 @@ def GOutput():
     task = Sniper.Task("GOutput")
     task.createSvc("OldStyleGetGlobalBufSvc/GetGlobalBufSvc")
     wa = task.createAlg("PruneGlobalBufAlg")
-    wa.property("OutputFile").set("mtresult.txt")
+    if useRootWriter:
+        tool = wa.createTool("WriteRootTool/WriteResultTool")
+    else:
+        tool = wa.createTool("WriteAsciiTool/WriteResultTool")
+        tool.property("OutputFile").set("mtresult.txt")
 
     return task
 
@@ -36,19 +41,20 @@ if __name__ == "__main__":
     import Sniper
     import SniperMuster
     import SniperProfiling
-    #import RootWriter
-    #import SniperRootUsages
     import SniperCoreUsages
     import MtIOExample
 
-    nthrd = 8
+    useRootWriter = True
+    nthrd = 4
     Sniper.setLogLevel(3)
     #Sniper.setShowTime()
     #Sniper.setLogFile("log.txt", False)
 
-    #global root_writer
-    #root_writer = Sniper.create("MtRootWriter/RootWriter")
-    #root_writer.property("Output").set({"FILE1": "output1.root", "FILE2": "output2.root"})
+    if useRootWriter:
+        import RootWriter
+        import SniperRootUsages
+        root_writer = Sniper.create("MtRootWriter/RootWriter")
+        root_writer.property("Output").set({"MtsTest": "mtresult.root"})
 
     # I/O and global buffer
     gs = SniperMuster.createGlobalStream("GlobalStream4Any/GlobalStream")
