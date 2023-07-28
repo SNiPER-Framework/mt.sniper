@@ -24,7 +24,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "SniperKernel/DagBase.h"
+#include "SniperMuster/DagBase.h"
 
 class AlgBase;
 class SniperJSON;

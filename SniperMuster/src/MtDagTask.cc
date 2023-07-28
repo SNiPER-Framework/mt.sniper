@@ -144,14 +144,14 @@ void MtDagTask::eval(const SniperJSON& json) {
 bool MtDagTask::execute() {
 
     if (m_limited && m_done >= m_evtMax) {
-        m_snoopy.stop();
+        m_snoopy->stop();
         return true;
     }
 
     try {
-        if (m_snoopy.state() == Sniper::RunState::Stopped)
+        if (m_snoopy->state() == Sniper::RunState::Stopped)
             return true;
-        if (m_snoopy.isErr())
+        if (m_snoopy->isErr())
             return false;
         //BeginEvent is fired
         m_beginEvt.load(m_done).fire(*this);
@@ -177,16 +177,16 @@ bool MtDagTask::execute() {
     }
     catch (std::exception &e)
     {
-        m_snoopy.setErr();
+        m_snoopy->setErr();
         LogError << e.what() << std::endl;
     }
     catch (...)
     {
-        m_snoopy.setErr();
+        m_snoopy->setErr();
         LogError << "catch an unknown exception" << std::endl;
     }
 
-    bool stat = !m_snoopy.isErr();
+    bool stat = !m_snoopy->isErr();
     if (stat)
     {
         ++m_done;
