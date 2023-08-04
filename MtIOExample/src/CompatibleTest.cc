@@ -1,4 +1,5 @@
 #include "SniperKernel/SvcBase.h"
+#include "SniperKernel/IIncidentHandler.h"
 #include "SniperKernel/DeclareDLE.h"
 #include "SniperKernel/SniperJSON.h"
 #include "SniperMuster/GlobalStream4Any.h"
@@ -19,7 +20,6 @@ class IGetGlobalBufSvc
 public:
     virtual MappedEvent &get() = 0;
     virtual MappedEvent &pop() = 0;
-    virtual void done() = 0;
 };
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -70,14 +70,32 @@ class OldStyleGetGlobalBufSvc : public SvcBase, public IGetGlobalBufSvc
         virtual ~OldStyleGetGlobalBufSvc() = default;
 
         virtual bool initialize() override;
-        virtual bool finalize() override { return true; }
+        virtual bool finalize() override;
 
         virtual MappedEvent &get() override;
         virtual MappedEvent &pop() override;
-        virtual void done() override;
     private:
+        class EndEvtHandler : public IIncidentHandler
+        {
+            public:
+                EndEvtHandler(ExecUnit *domain, OldStyleGetGlobalBufSvc* svc)
+                    : IIncidentHandler(domain),
+                      m_svc(svc)
+                {
+                }
+                virtual ~EndEvtHandler() = default;
+
+                virtual bool handle(Incident &incident) override;
+
+            private:
+                OldStyleGetGlobalBufSvc *m_svc;
+        };
+
+        friend class EndEvtHandler;
+
         GlobalBuffer4Any* m_gbuf;
-        GlobalBuffer4Any::Elem* m_slot;
+        GlobalBuffer4Any::Elem* m_slot{nullptr};
+        EndEvtHandler* m_handler;
 };
 SNIPER_DECLARE_DLE(OldStyleGetGlobalBufSvc);
 
@@ -89,15 +107,27 @@ OldStyleGetGlobalBufSvc::OldStyleGetGlobalBufSvc(const std::string &name)
 bool OldStyleGetGlobalBufSvc::initialize()
 {
     m_gbuf = GlobalStream4Any::GetBufferFrom("GlobalStream");
+    m_handler = new EndEvtHandler(m_par, this);
+    m_handler->regist("EndEvent");
+    return true;
+}
+
+bool OldStyleGetGlobalBufSvc::finalize()
+{
+    m_handler->unregist("EndEvent");
+    delete m_handler;
     return true;
 }
 
 MappedEvent &OldStyleGetGlobalBufSvc::get()
 {
-    m_slot = m_gbuf->next();
     if (m_slot == nullptr)
     {
-        m_par->stop();
+        m_slot = m_gbuf->next();
+        if (m_slot == nullptr)
+        {
+            m_par->stop();
+        }
     }
     return *(m_slot->dptr);
 }
@@ -113,7 +143,13 @@ MappedEvent &OldStyleGetGlobalBufSvc::pop()
     return *data;
 }
 
-void OldStyleGetGlobalBufSvc::done()
+bool OldStyleGetGlobalBufSvc::EndEvtHandler::handle(Incident &/*incident*/)
 {
-    m_gbuf->setDone(m_slot);
+    if (m_svc->m_slot != nullptr)
+    {
+        m_svc->m_gbuf->setDone(m_svc->m_slot);
+        m_svc->m_slot = nullptr;
+    }
+
+    return true;
 }
